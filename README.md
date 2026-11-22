@@ -42,6 +42,8 @@ the session cookie.
 | `npm test` | Runs the Vitest suite (in-memory SQLite, injected clock, no network). |
 | `npm run typecheck` | Runs `tsc --noEmit`. |
 | `npm run demo:reset -- --yes` | Deletes **only** the local SQLite files and `.local/uploads/`. Run `demo:seed` afterwards. |
+| `npm run demo:enrich` | Runs a live You.com search for each seeded demo channel and lists the ones that have public evidence. Run it after `demo:seed` (needs `YDC_API_KEY`). |
+| `npm run demo:videos` | Regenerates the two seed draft MP4s with macOS Swift/AVFoundation. |
 | `npm run youcom:smoke` | Makes one live You.com call with a generic public query, to check connectivity. Never point it at a creator who hasn't opted in. |
 
 ## Demo accounts
@@ -53,6 +55,7 @@ Pick an account on the sign-in screen (`GET /api/v1/demo/accounts`). No password
 | Hushkeys | Brand | Owns the Whisper 75 keyboard and the felt desk mat, a sample report campaign, and a held-dispute campaign. |
 | Northwind Desks | Brand | Second brand, used to check isolation. |
 | Clack Lab, Desk Setup Daily, Big Tech Mike, Thock & Type, Cozy Workspace (all "sample") | Creator | **Fictitious** listed profiles. Their evidence is `SAMPLE` data with example.com links. |
+| HipyoTech, Glarses, Alexotos, TaeKeyboards ("demo channel") | Creator | Real public YouTube channels, used for the demo with approval. They aren't Safka members. They're listed only after `demo:enrich`, with live public sources and no invented rates or views. |
 | Live Demo Creator | Creator | Blank draft profile, used to run live You.com enrichment with a handle whose owner has opted in. |
 | Demo Admin | Admin | Resolves disputes. |
 
@@ -67,5 +70,5 @@ substitutes fixture data. The creator picks which sources and tags to keep and t
 ## Reset
 
 ```bash
-npm run demo:reset -- --yes && npm run demo:seed
+npm run demo:reset -- --yes && npm run demo:seed && npm run demo:enrich
 ```

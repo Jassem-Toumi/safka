@@ -206,3 +206,26 @@ describe("you-search helpers", () => {
     expect(parseToolResult(plain).map((h) => h.url)).toEqual(["https://c.example/x", "https://d.example"]);
   });
 });
+
+describe("demo channels", () => {
+  it("lists demo channels only with PUBLIC-backed tags; skips ones without enough evidence", async () => {
+    const { enrichAndListDemoChannels } = await import("@/server/seed/demoChannels");
+    freshDb();
+    process.env.YDC_MODE = "live";
+    setSearchProviderForTests(async (q) => {
+      if (q.includes("@TaeKeyboards")) return [];
+      const handle = q.match(/"(@[^"]+)"/)![1]!;
+      return [{ url: "https://www.youtube.com/watch?v=abcdefghijk", title: "Switch sound test review", snippet: `${handle} mechanical keyboard`, publishedAt: null }];
+    });
+    const out = await enrichAndListDemoChannels(getDb());
+    expect(out.filter((o) => o.listed).length).toBe(3);
+    expect(out.find((o) => o.name.startsWith("TaeKeyboards"))).toMatchObject({ listed: false, status: "EMPTY" });
+    const brand = await signIn(SEED.users.brandHushkeys);
+    const { GET } = await import("@/app/api/v1/creators/[id]/route");
+    const card = (await body(await GET(req("GET", "/x", { cookie: brand }), ctx({ id: SEED.profiles.demoHipyo })))).data;
+    expect(card.dataMode).toBe("LIVE");
+    expect(card.rate).toBeNull();
+    expect(card.topics.every((t: { origin: string }) => t.origin === "PUBLIC")).toBe(true);
+    expect((await enrichAndListDemoChannels(getDb()))[0]!.status).toBe("SKIPPED");
+  });
+});

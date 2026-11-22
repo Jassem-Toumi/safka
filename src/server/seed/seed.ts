@@ -168,6 +168,38 @@ const CREATORS: CreatorSeed[] = [
   },
 ];
 
+/**
+ * Real public YouTube channels used for the localhost demo (user-approved, 2026-11-22). Seeded as DRAFT with only the
+ * channel set: no rates, views or tags are invented. `npm run demo:enrich` runs live You.com search and lists them with
+ * PUBLIC evidence. They are not Safka members; the bio says so.
+ */
+export const DEMO_CHANNELS: { userId: string; profileId: string; name: string; handle: string }[] = [
+  { userId: SEED.users.demoHipyo, profileId: SEED.profiles.demoHipyo, name: "HipyoTech (demo channel)", handle: "hipyotech" },
+  { userId: SEED.users.demoGlarses, profileId: SEED.profiles.demoGlarses, name: "Glarses (demo channel)", handle: "Glarses" },
+  { userId: SEED.users.demoAlexotos, profileId: SEED.profiles.demoAlexotos, name: "Alexotos (demo channel)", handle: "alexotos" },
+  { userId: SEED.users.demoTae, profileId: SEED.profiles.demoTae, name: "TaeKeyboards (demo channel)", handle: "TaeKeyboards" },
+];
+
+const DEMO_CHANNEL_BIO =
+  "Public YouTube channel shown for a local demo only. Not a Safka member and not affiliated; tags and sources come from live You.com search results.";
+
+for (const d of DEMO_CHANNELS) {
+  CREATORS.push({
+    userId: d.userId,
+    profileId: d.profileId,
+    name: d.name,
+    handle: d.handle,
+    bio: DEMO_CHANNEL_BIO,
+    topics: [],
+    formats: [],
+    rate: null,
+    typical7dViews: null,
+    listed: false,
+    sample: false,
+    evidence: [],
+  });
+}
+
 const iso = (ms: number) => new Date(ms).toISOString();
 
 export type SeedSummary = { usersInserted: number; dealsInserted: number; mediaCopied: number };
@@ -239,6 +271,11 @@ export function seedDemo(db: Db, nowDate: Date = new Date()): SeedSummary {
   });
 
   const mediaCopied = copySeedMedia();
+  // Seed rows created before the MP4s existed carry a placeholder size; fix it once the files are present.
+  for (const key of SEED_MEDIA) {
+    const size = seedMediaSize(key);
+    if (size > 1) run(db, "UPDATE uploads SET size_bytes = ? WHERE disk_key = ? AND size_bytes <> ?", size, key, size);
+  }
   return { usersInserted, dealsInserted, mediaCopied };
 }
 

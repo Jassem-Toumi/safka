@@ -18,7 +18,7 @@ Spec: `Creator_Sponsorship_Backend_Spec-final.md`. Status legend: ✅ done · �
 - ✅ `GET /demo/accounts`, `POST/DELETE /demo/session`, `GET /me`; HttpOnly SameSite=Lax cookie; hashed session IDs in SQLite
 - ✅ Seeds: 2 brands, 5 fictitious sample creators (listed), 1 blank live-demo creator (draft), admin, 3 products, sample campaign + completed sample deal (420/600), moderation campaign + HELD disputed deal
 - ✅ README (setup, env table, commands, demo accounts, reset)
-- ⬜ Seed MP4s: waiting on the team (`seed-assets/seed-draft-option-{1,2}.mp4`)
+- ✅ Seed MP4s generated (`npm run demo:videos`, D25) and copied to `.local/uploads/` by seed
 
 ### §3 You.com + profile — ✅
 - ✅ Channel normalizer `src/server/creators/channel.ts`, card builder with label provenance `src/server/creators/card.ts`
@@ -26,8 +26,8 @@ Spec: `Creator_Sponsorship_Backend_Spec-final.md`. Status legend: ✅ done · �
 - ✅ `GET /creators`, `GET /creators/{id}` (`src/server/creators/directory.ts`)
 - ✅ `POST /creator/enrichment` live (MCP `you-search`, `src/server/youcom/client.ts`) + fixture mode (`fixture.ts`), identity
   match + keyword map (`extract.ts`), stale-safe apply (`enrichment.ts`). Live path tested with a stubbed provider.
-- 🟡 Live keyless endpoint: connects and lists tools, but calls return "Free tier limit exceeded" (`QUOTA_EXCEEDED`). Needs `YDC_API_KEY`
-  plus an opted-in handle for acceptance #1 (D18).
+- ✅ Live search verified with the sponsor key in `.env.local` (`YDC_MODE=live`). Four real demo channels are listed with PUBLIC evidence via
+  `npm run demo:enrich` (D24) and appear in brand matches with live citations (acceptance #1).
 
 ### §4 Briefs, matches, offers — 🟡 (offer terms are Session 3)
 - ✅ Products CRUD `src/server/products/products.ts` (landing URL hygiene)
@@ -48,12 +48,12 @@ Spec: `Creator_Sponsorship_Backend_Spec-final.md`. Status legend: ✅ done · �
   `src/server/campaigns/{budget,parse,campaigns,matcher,angles}.ts`. `scripts/youcom-smoke.ts` (`npm run youcom:smoke`).
 - `src/app/api/v1/{demo/accounts,demo/session,me,creator/profile,creator/profile/visibility,creator/enrichment,creators,creators/[id],
   products,products/[id],campaigns,campaigns/parse,campaigns/[id],campaigns/[id]/matches}/route.ts`.
-- `tests/*.test.ts` + `tests/helpers.ts` (65 tests).
+- `tests/*.test.ts` + `tests/helpers.ts` (66 tests).
 
 ---
 
 ## Next session brief (Session 3)
-**Start:** `source ~/.nvm/nvm.sh && nvm use && npm install && npm run demo:seed && npm test` (expect 65 passing).
+**Start:** `source ~/.nvm/nvm.sh && nvm use && npm install && npm run demo:seed && npm test` (expect 66 passing). `.env.local` has `YDC_MODE=live` and the key; run `npm run demo:enrich` after a reset.
 Read `CLAUDE.md`, then final spec §4 (offer terms), §5, §6, §7, and `DECISIONS.md` D10–D14, D22.
 
 **Reuse:** `campaignTotals`/`campaignBudget`/`openNegotiationCount` from `src/server/campaigns/budget.ts` (call them inside the
@@ -79,5 +79,4 @@ Read `CLAUDE.md`, then final spec §4 (offer terms), §5, §6, §7, and `DECISIO
 6. Reports `GET /campaigns/{id}/report`, `GET /deals/{id}/report` (sample 420/600 BELOW_TARGET 30%, NO_TARGET/PENDING/INSUFFICIENT_DATA).
 7. Update this file, changelog, decisions. Commit.
 
-**Open items for the user:** seed MP4s (`seed-assets/seed-draft-option-{1,2}.mp4`), an opted-in YouTube handle, and a `YDC_API_KEY`
-in `.env.local` (the keyless tier is out of quota, D18).
+**Open items for the user:** none blocking. Rotate the You.com key after the hackathon (it was pasted into chat).

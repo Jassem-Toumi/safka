@@ -41,7 +41,7 @@ export const TOPIC_KEYWORDS: [string, RegExp][] = [
 export const FORMAT_KEYWORDS: [Format, RegExp][] = [
   ["REVIEW", /\breviews?\b|\breviewed\b/i],
   ["COMPARISON", /\bvs\.?\b|\bversus\b|compar(ed|ison|ing)|side[- ]by[- ]side|sound test/i],
-  ["DEMO", /\bdemo\b|demonstrat|in action|sound test|hands[- ]on/i],
+  ["DEMO", /\bdemo\b|demonstrat|in action|sound test|hands[- ]on|typing test|\basmr\b/i],
   ["TUTORIAL", /how to|tutorial|step[- ]by[- ]step|\bguide\b/i],
   ["UNBOXING", /unbox/i],
   ["STORY", /\bvlog\b|my story|journey|day in the life/i],

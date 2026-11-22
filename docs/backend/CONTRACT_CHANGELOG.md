@@ -3,6 +3,9 @@
 Source of truth: `src/shared/contracts/*`. Frontend: import types and Zod schemas from `@/shared/contracts`; never copy enums.
 Log every change here (newest first) so the frontend teammate can see what moved.
 
+## v1.1.1 — 2026-11-22
+- No shape changes. New seed IDs `SEED.users/profiles.demoHipyo|demoGlarses|demoAlexotos|demoTae` (real demo channels with LIVE data).
+
 ## v1.1 — 2026-11-22 (Session 2)
 - **Live now:** `GET/PUT /creator/profile`, `POST /creator/profile/visibility`, `POST /creator/enrichment`, `GET /creators`,
   `GET /creators/{id}`, `GET/POST /products`, `GET/PATCH /products/{id}`, `POST /campaigns/parse`, `GET/POST /campaigns`,
