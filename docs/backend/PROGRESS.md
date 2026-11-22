@@ -7,7 +7,7 @@ Spec: `Creator_Sponsorship_Backend_Spec-final.md`. Status legend: ✅ done · �
 |---|---|---|
 | 1 | Foundation: Node 24, Next.js, SQLite schema (all tables), shared contracts (all routes), demo accounts/session/me, origin guard, seed, tests, docs | ✅ |
 | 2 | Creator profile + visibility, directory, products, You.com live/fixture enrichment, campaigns + parse (RULES, optional AI), matcher + angles | ✅ (AI brief mode deferred) |
-| 3 | Deals: create/counter/accept/decline/withdraw/expire, budget cap + concurrency, idempotency, uploads + range streaming, drafts/approval/HELD, publication, confirmations/RELEASED, disputes + admin, inbox filters, reports | ⬜ |
+| 3 | Deals: create/counter/accept/decline/withdraw/expire, budget cap + concurrency, idempotency, uploads + range streaming, drafts/approval/HELD, publication, confirmations/RELEASED, disputes + admin, inbox filters, reports | ✅ |
 | 4 (if time) | Full §9 acceptance run with three contexts, frontend integration fixes, optional You.com AI brief | ⬜ |
 
 ## Checklist by spec section
@@ -29,15 +29,21 @@ Spec: `Creator_Sponsorship_Backend_Spec-final.md`. Status legend: ✅ done · �
 - ✅ Live search verified with the sponsor key in `.env.local` (`YDC_MODE=live`). Four real demo channels are listed with PUBLIC evidence via
   `npm run demo:enrich` (D24) and appear in brand matches with live citations (acceptance #1).
 
-### §4 Briefs, matches, offers — 🟡 (offer terms are Session 3)
+### §4 Briefs, matches, offers — ✅ (offer terms via `POST /deals`; AI brief mode deferred)
 - ✅ Products CRUD `src/server/products/products.ts` (landing URL hygiene)
 - ✅ `POST /campaigns/parse` RULES (`src/server/campaigns/parse.ts`). ⬜ optional AI mode via `YDC_BRIEF_MODEL` (Session 4 if time)
 - ✅ Campaign CRUD/confirm/close/budget floor (`campaigns.ts`), budget helper (`budget.ts`)
 - ✅ Matcher + angle templates (`matcher.ts`, `angles.ts`): Clack Lab ranks first for the quiet-keyboard brief, Big Tech is omitted
-### §5 Deal state and payment — ⬜ (Session 3)
-### §6 Media and reporting — ⬜ (Session 3)
-### §7 Contract — ✅ v1.1 in `src/shared/contracts` (routes implemented: identity, profile, directory, enrichment, products, campaigns, matches)
-### §9 Acceptance — 🟡 #1 partially (seed, sign-in, restart persistence by file DB). Rest pending.
+### §5 Deal state and payment — ✅
+- ✅ `POST/GET /deals`, `GET /deals/{id}`, `POST /deals/{id}/actions` (all 14 actions), derived EXPIRED, one-open-negotiation,
+  budget re-check on accept in the same `BEGIN IMMEDIATE` tx, idempotency with replay before the version check (`src/server/deals/*`)
+- ✅ Inbox filters `needs_action` / `in_progress` / `closed`; admin `GET /admin/disputes[/{id}]`; resolutions RESUME/CANCEL/REFUND/RELEASE
+### §6 Media and reporting — ✅
+- ✅ Multipart MP4 upload (20 MiB → 413, `ftyp` check, ≤6 unattached, file deleted if the tx fails), playback URL, media stream with
+  single ranges (206/416, `private, no-store`), verified over real HTTP in `next dev`
+- ✅ `GET /deals/{id}/report`, `GET /campaigns/{id}/report` (sample 420/600 BELOW_TARGET 30%)
+### §7 Contract — ✅ v1.2 — every §7 route is implemented
+### §9 Acceptance — 🟡 #1–#5 covered by route-level tests (`tests/deals.test.ts`, `tests/enrichment.test.ts`); a browser run with three contexts is still to do (Session 4)
 
 ## Files map
 - `src/shared/contracts/*` — Zod schemas + types for every route. `src/shared/topics.ts` — slug normalizer.
@@ -48,35 +54,24 @@ Spec: `Creator_Sponsorship_Backend_Spec-final.md`. Status legend: ✅ done · �
   `src/server/campaigns/{budget,parse,campaigns,matcher,angles}.ts`. `scripts/youcom-smoke.ts` (`npm run youcom:smoke`).
 - `src/app/api/v1/{demo/accounts,demo/session,me,creator/profile,creator/profile/visibility,creator/enrichment,creators,creators/[id],
   products,products/[id],campaigns,campaigns/parse,campaigns/[id],campaigns/[id]/matches}/route.ts`.
-- `tests/*.test.ts` + `tests/helpers.ts` (66 tests).
+- `src/server/deals/{view,create,actions,idempotency,events,terms,list,media,reports}.ts`; routes under `src/app/api/v1/{deals,admin}/**`
+  and `campaigns/[id]/report`.
+- `tests/*.test.ts` + `tests/helpers.ts` (80 tests).
 
 ---
 
-## Next session brief (Session 3)
-**Start:** `source ~/.nvm/nvm.sh && nvm use && npm install && npm run demo:seed && npm test` (expect 66 passing). `.env.local` has `YDC_MODE=live` and the key; run `npm run demo:enrich` after a reset.
-Read `CLAUDE.md`, then final spec §4 (offer terms), §5, §6, §7, and `DECISIONS.md` D10–D14, D22.
+## Next session brief (Session 4)
+**Start:** `source ~/.nvm/nvm.sh && nvm use && npm install && npm run demo:seed && npm test` (expect 80 passing).
+`.env.local` has `YDC_MODE=live` and the sponsor key. After any reset, run `npm run demo:enrich` to list the real demo channels.
 
-**Reuse:** `campaignTotals`/`campaignBudget`/`openNegotiationCount` from `src/server/campaigns/budget.ts` (call them inside the
-`tx`, after BEGIN IMMEDIATE). `ownedProductRow`, `ownedCampaignRow`, `listedCard` for ownership/recipient checks.
-`fingerprint()` in `src/server/ids.ts` for idempotency. `fixedClock` for expiry tests.
+**Do, in this order:**
+1. Help with frontend integration: check that the teammate's pages call `http://127.0.0.1:3000` (D3), send `Idempotency-Key` on
+   `POST /deals` and actions, refresh on `STALE_DEAL`, and use `availableActions` / `nextActionRole` rather than re-deriving them.
+   Fix backend issues they hit; log contract changes.
+2. Run §9 acceptance in a real browser with three profiles (brand, creator, admin) using the built-in browser pane: the
+   quiet-keyboard campaign ($600) → match → $250 offer → $300 counter → accept; a direct offer; two drafts → revision → approve
+   → publish link → both confirm; the admin refund on the seeded dispute; the sample report.
+3. Optional: You.com AI brief mode (`YDC_BRIEF_MODEL`, Zod-validated, falls back to RULES). Only if time allows.
 
-**Build, in this order (each with tests):**
-1. `src/server/deals/` (view builder + actions). `POST /deals` (Idempotency-Key, listed recipient → else 409 `PROFILE_UNAVAILABLE`,
-   campaign product = campaign's product, ACTIVE campaign, price ≤ remaining for campaign offers, `now < draftDueAt < publishDueAt`,
-   product snapshot + `YOUTUBE`, proposal expiry +7 days, materialize expired rows then insert under the one-open index (D10) →
-   409 `ACTIVE_NEGOTIATION_EXISTS` with `details.dealId`). `GET /deals?filter=&campaignId=`, `GET /deals/{id}` (participants; admin
-   only when the deal has a dispute; else 404). Derive `EXPIRED` on reads.
-2. `POST /deals/{id}/actions`: idempotency replay is checked **before** the version check, then `STALE_DEAL`. ACCEPT/DECLINE/COUNTER/WITHDRAW,
-   accept re-checks budget in the same tx (`BUDGET_EXCEEDED` keeps the negotiation open), dates re-validated. Concurrency test: $500
-   left, two $300 proposals accepted concurrently → only one commits (two DB connections on one file DB).
-3. Uploads `POST /deals/{id}/uploads` (multipart, ≤20 MiB → 413, MP4 `ftyp` signature, opaque name in `.local/uploads/`, ≤6 unattached,
-   cleanup on error; write the file **before** the tx, insert row in tx, delete the file if the tx fails). Playback URL + media
-   stream with single byte ranges (206/416, `Cache-Control: private, no-store`).
-4. SUBMIT_DRAFTS / REQUEST_CHANGES (≤3 batches) / APPROVE_DRAFT (latest batch, payment HELD) / SUBMIT_PUBLICATION (watch/shorts/youtu.be,
-   11-char ID, publishedAt between approval and now) / CONFIRM_DELIVERY (second → COMPLETED + RELEASED atomically).
-5. REPORT_ISSUE + admin `GET /admin/disputes[/{id}]` + RESUME/CANCEL/REFUND/RELEASE (reason required). Refund on the seeded held
-   dispute frees exactly $400 (moderation campaign remaining 60000 → 100000).
-6. Reports `GET /campaigns/{id}/report`, `GET /deals/{id}/report` (sample 420/600 BELOW_TARGET 30%, NO_TARGET/PENDING/INSUFFICIENT_DATA).
-7. Update this file, changelog, decisions. Commit.
-
-**Open items for the user:** none blocking. Rotate the You.com key after the hackathon (it was pasted into chat).
+**Known gaps / notes:** admins can read any deal that has ever had a dispute but can only act while one is open (D28).
+Live outcome metrics are never collected (by design).

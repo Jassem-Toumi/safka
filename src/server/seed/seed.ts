@@ -15,7 +15,7 @@ export function seedUuid(name: string): string {
 }
 
 export function uploadsDir(): string {
-  return join(repoRoot(), ".local", "uploads");
+  return process.env.UPLOADS_DIR || join(repoRoot(), ".local", "uploads");
 }
 
 type CreatorSeed = {

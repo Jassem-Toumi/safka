@@ -3,6 +3,19 @@
 Source of truth: `src/shared/contracts/*`. Frontend: import types and Zod schemas from `@/shared/contracts`; never copy enums.
 Log every change here (newest first) so the frontend teammate can see what moved.
 
+## v1.2 — 2026-11-22 (Session 3)
+- **Live now:** `POST/GET /deals`, `GET /deals/{id}`, `POST /deals/{id}/actions`, `POST /deals/{id}/uploads`,
+  `GET /deals/{id}/assets/{assetId}/playback`, `GET|HEAD /deals/{id}/assets/{assetId}/media`, `GET /deals/{id}/report`,
+  `GET /campaigns/{id}/report`, `GET /admin/disputes`, `GET /admin/disputes/{id}`. Every §7 route is now implemented.
+- No schema changes. Notes for the frontend:
+  - `POST /deals` and actions **require** an `Idempotency-Key` header (reuse the same key when retrying the same click).
+    Replays return the header `Idempotent-Replay: true`.
+  - `Deal.creator.id` is the creator profile ID (D27).
+  - Upload returns **201** `{ uploadId, status: "READY", sizeBytes }`. Use `playback.url` directly as `<video src>` (same origin,
+    cookie auth, Range support).
+  - Errors: wrong participant → 403; wrong state → 409 `INVALID_STATE`; older `proposalId` → 409 `STALE_DEAL`; lapsed proposal →
+    409 `PROPOSAL_EXPIRED`.
+
 ## v1.1.1 — 2026-11-22
 - No shape changes. New seed IDs `SEED.users/profiles.demoHipyo|demoGlarses|demoAlexotos|demoTae` (real demo channels with LIVE data).
 
