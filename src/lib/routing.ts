@@ -49,20 +49,24 @@ export function safeReturnTo(value: string | null): string | null {
 	return url.pathname + url.search;
 }
 
-const ROLE_PATH_PREFIXES: Record<Me["role"], readonly string[]> = {
-	BRAND: ["/brand/", "/deals/"],
-	CREATOR: ["/creator/", "/deals/"],
-	ADMIN: ["/admin/"]
+const ROLE_SECTIONS: Record<Me["role"], readonly string[]> = {
+	BRAND: ["brand", "deals"],
+	CREATOR: ["creator", "deals"],
+	ADMIN: ["admin"]
 };
+
+/** Whether the role may open `path`, judged by its first path segment. */
+export function canOpenPath(me: Me, path: string): boolean {
+	const [section = ""] = path.split(/[?#]/)[0]?.split("/").filter(Boolean) ?? [];
+
+	return ROLE_SECTIONS[me.role].includes(section);
+}
 
 /** A safe returnTo the role can open, or the role's home. */
 export function postSignInPath(me: Me, returnTo: string | null): string {
 	const path = safeReturnTo(returnTo);
 
-	if (
-		path !== null &&
-		ROLE_PATH_PREFIXES[me.role].some((prefix) => path.startsWith(prefix))
-	) {
+	if (path !== null && canOpenPath(me, path)) {
 		return path;
 	}
 

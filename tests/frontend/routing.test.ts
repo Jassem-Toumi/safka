@@ -2,7 +2,12 @@ import type { Me } from "@/shared/contracts";
 
 import { describe, expect, it } from "vitest";
 
-import { homePathFor, postSignInPath, safeReturnTo } from "@/lib/routing";
+import {
+	canOpenPath,
+	homePathFor,
+	postSignInPath,
+	safeReturnTo
+} from "@/lib/routing";
 
 function user(role: Me["role"], profileReady = true): Me {
 	return { id: "user-1", role, displayName: "Someone", profileReady };
@@ -64,5 +69,22 @@ describe("postSignInPath", () => {
 		expect(postSignInPath(user("CREATOR"), "//evil.example")).toBe(
 			"/creator/inbox"
 		);
+	});
+});
+
+describe("canOpenPath", () => {
+	it("lets each role open only its own sections", () => {
+		expect(canOpenPath(user("BRAND"), "/brand/campaigns/new")).toBe(true);
+		expect(canOpenPath(user("BRAND"), "/deals/abc")).toBe(true);
+		expect(canOpenPath(user("BRAND"), "/creator/inbox")).toBe(false);
+		expect(canOpenPath(user("CREATOR"), "/creator/profile")).toBe(true);
+		expect(canOpenPath(user("CREATOR"), "/admin/disputes")).toBe(false);
+		expect(canOpenPath(user("ADMIN"), "/admin/disputes/x")).toBe(true);
+		expect(canOpenPath(user("ADMIN"), "/deals/abc")).toBe(false);
+	});
+
+	it("matches whole section names, not prefixes of them", () => {
+		expect(canOpenPath(user("BRAND"), "/brandnew")).toBe(false);
+		expect(canOpenPath(user("BRAND"), "/brand")).toBe(true);
 	});
 });
