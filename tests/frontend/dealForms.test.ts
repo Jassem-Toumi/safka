@@ -434,3 +434,36 @@ describe("splitDisputes", () => {
 		expect(resolved.map((d) => d.id)).toEqual(["r2", "r1"]);
 	});
 });
+
+describe("validatePublication with a minute-precision time", () => {
+	// The field holds minutes only; the backend needs a time after the draft
+	// approval (seconds earlier) and not in the future.
+	const now = new Date("2026-11-22T20:26:57.000Z");
+
+	it("sends the exact submit time when the default was left untouched", () => {
+		const untouched = isoToLocalInput("2026-11-22T20:20:05.000Z");
+		const result = validatePublication(
+			{ url: "https://youtu.be/aaaaaaaaaaa", publishedAt: untouched, attested: true },
+			now,
+			untouched
+		);
+
+		expect(result).toEqual({
+			ok: true,
+			value: { url: "https://youtu.be/aaaaaaaaaaa", publishedAt: now.toISOString() }
+		});
+	});
+
+	it("sends the exact submit time when the current minute is picked", () => {
+		const result = validatePublication(
+			{
+				url: "https://youtu.be/aaaaaaaaaaa",
+				publishedAt: isoToLocalInput(now.toISOString()),
+				attested: true
+			},
+			now
+		);
+
+		expect(result.ok && result.value.publishedAt).toBe(now.toISOString());
+	});
+});

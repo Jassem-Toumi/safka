@@ -175,10 +175,19 @@ function isWebUrl(value: string): boolean {
 	}
 }
 
-/** The backend checks the link is a YouTube video; this catches typos early. */
+const MINUTE_MS = 60_000;
+
+/**
+ * The backend checks the link is a YouTube video; this catches typos early.
+ *
+ * @param untouchedDefault - The field's initial value. The field only holds
+ * minutes, so its default (or the current minute) would fall before a draft
+ * approved seconds ago; in those cases the exact submit time is sent.
+ */
 export function validatePublication(
 	input: PublicationInput,
-	now: Date
+	now: Date,
+	untouchedDefault?: string
 ): FormResult<{ url: string; publishedAt: string }, PublicationField> {
 	const errors: Partial<Record<PublicationField, string>> = {};
 	const url = input.url.trim();
@@ -190,7 +199,14 @@ export function validatePublication(
 			"Paste a full YouTube link, like https://youtu.be/… or https://www.youtube.com/watch?v=…";
 	}
 
-	const publishedAt = localInputToIso(input.publishedAt);
+	const pickedAt = localInputToIso(input.publishedAt);
+	const pickedMs = pickedAt === null ? null : new Date(pickedAt).getTime();
+	const isCurrentMinute =
+		pickedMs !== null && Math.abs(pickedMs - now.getTime()) < MINUTE_MS;
+	const publishedAt =
+		input.publishedAt === untouchedDefault || isCurrentMinute
+			? now.toISOString()
+			: pickedAt;
 
 	if (publishedAt === null) {
 		errors.publishedAt = "Pick when the video went live.";

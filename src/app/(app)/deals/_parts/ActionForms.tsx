@@ -371,6 +371,7 @@ export function PublicationForm({ deal, runner }: ActionProps) {
 		publishedAt: isoToLocalInput(new Date().toISOString()),
 		attested: false
 	}));
+	const [initialPublishedAt] = useState(input.publishedAt);
 	const [errors, setErrors] = useState<
 		Partial<Record<PublicationField, string>>
 	>({});
@@ -394,7 +395,7 @@ export function PublicationForm({ deal, runner }: ActionProps) {
 	function handleSubmit(event: FormEvent<HTMLFormElement>) {
 		event.preventDefault();
 
-		const result = validatePublication(input, new Date());
+		const result = validatePublication(input, new Date(), initialPublishedAt);
 
 		if (!result.ok) {
 			setErrors(result.errors);
