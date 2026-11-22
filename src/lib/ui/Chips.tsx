@@ -22,14 +22,14 @@ type OriginLabelProps = {
 };
 
 const CHIP_BASE =
-	"inline-flex items-center rounded-full px-2.5 py-0.5 text-sm font-medium ring-1 ring-inset";
+	"inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-sm font-semibold whitespace-nowrap ring-1 ring-inset before:size-1.5 before:rounded-full before:bg-current before:opacity-70 before:content-['']";
 
 const TONE_CLASSES: Record<StatusTone, string> = {
-	neutral: "bg-zinc-100 text-zinc-700 ring-zinc-300",
-	action: "bg-indigo-50 text-indigo-800 ring-indigo-200",
-	success: "bg-emerald-50 text-emerald-800 ring-emerald-200",
+	neutral: "bg-zinc-50 text-zinc-700 ring-zinc-300",
+	action: "bg-indigo-50 text-indigo-800 ring-indigo-300/70",
+	success: "bg-emerald-50 text-emerald-800 ring-emerald-300/70",
 	warning: "bg-amber-50 text-amber-900 ring-amber-300",
-	danger: "bg-red-50 text-red-800 ring-red-200"
+	danger: "bg-red-50 text-red-800 ring-red-300/70"
 };
 
 const PAYMENT_TONES: Record<PaymentStatus, StatusTone> = {

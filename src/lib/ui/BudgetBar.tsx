@@ -30,7 +30,7 @@ export function BudgetBar({ budget }: BudgetBarProps) {
 			<dl className="grid grid-cols-2 gap-3 sm:grid-cols-4">
 				<div>
 					<dt className="text-sm text-zinc-600">Total</dt>
-					<dd className="font-medium tabular-nums">
+					<dd className="font-semibold tracking-tight tabular-nums">
 						{formatCents(budget.budgetCents)}
 					</dd>
 				</div>
@@ -42,7 +42,7 @@ export function BudgetBar({ budget }: BudgetBarProps) {
 						/>
 						Committed
 					</dt>
-					<dd className="font-medium tabular-nums">
+					<dd className="font-semibold tracking-tight tabular-nums">
 						{formatCents(budget.committedCents)}
 					</dd>
 				</div>
@@ -54,22 +54,22 @@ export function BudgetBar({ budget }: BudgetBarProps) {
 						/>
 						Spent
 					</dt>
-					<dd className="font-medium tabular-nums">
+					<dd className="font-semibold tracking-tight tabular-nums">
 						{formatCents(budget.spentCents)}
 					</dd>
 				</div>
 				<div>
 					<dt className="text-sm text-zinc-600">Remaining</dt>
-					<dd className="font-medium tabular-nums">
+					<dd className="font-semibold tracking-tight tabular-nums">
 						{formatCents(budget.remainingCents)}
 					</dd>
 				</div>
 			</dl>
 			<div
 				aria-hidden="true"
-				className="flex h-2 overflow-hidden rounded-full bg-zinc-200"
+				className="flex h-2.5 overflow-hidden rounded-full bg-zinc-200/80 ring-1 ring-zinc-900/5 ring-inset"
 			>
-				<div className="bg-indigo-700" style={{ width: `${spentPct}%` }} />
+				<div className="bg-indigo-700 bg-brand-gradient" style={{ width: `${spentPct}%` }} />
 				<div className="bg-indigo-300" style={{ width: `${committedPct}%` }} />
 			</div>
 			<p className="text-sm text-zinc-500">Agreed deals reserve budget</p>

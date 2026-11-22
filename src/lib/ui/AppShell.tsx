@@ -134,12 +134,15 @@ export function AppShell({ children }: { children: ReactNode }) {
 
 	return (
 		<MeProvider me={me}>
-			<header className="border-b border-zinc-200 bg-white">
+			<header className="border-b border-zinc-200/80 bg-white/80 shadow-[0_1px_0_rgb(255_255_255/0.6)] backdrop-blur">
 				<div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-2 px-4 py-3">
 					<Link
 						href={homePathFor(me)}
-						className="text-lg font-semibold tracking-tight focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+						className="inline-flex items-center gap-2 rounded-md text-lg font-bold tracking-tight text-zinc-950 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
 					>
+						<span aria-hidden="true" className="logo-mark size-7 text-sm">
+							S
+						</span>
 						Safka
 					</Link>
 
@@ -155,8 +158,8 @@ export function AppShell({ children }: { children: ReactNode }) {
 											aria-current={current ? "page" : undefined}
 											className={`inline-flex min-h-10 items-center rounded-md px-2 text-sm font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 ${
 												current
-													? "bg-zinc-100 text-zinc-900"
-													: "text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900"
+													? "bg-indigo-50 text-indigo-800 ring-1 ring-indigo-100 ring-inset"
+													: "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
 											}`}
 										>
 											{label}
@@ -177,7 +180,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 							onClick={handleSwitchAccount}
 							disabled={isSwitching}
 							aria-busy={isSwitching}
-							className="min-h-10 rounded-md border border-zinc-300 bg-white px-3 text-sm font-medium hover:bg-zinc-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-60"
+							className="min-h-10 rounded-md border border-zinc-300 bg-white px-3 text-sm font-medium shadow-sm hover:bg-zinc-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-60"
 						>
 							{isSwitching ? "Switching…" : "Switch account"}
 						</button>

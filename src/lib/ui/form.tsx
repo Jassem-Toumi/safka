@@ -22,13 +22,14 @@ type ErrorNoteProps = {
 };
 
 const BUTTON_BASE =
-	"inline-flex min-h-11 items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:cursor-not-allowed disabled:opacity-60";
+	"inline-flex min-h-11 items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:cursor-not-allowed disabled:opacity-60";
 
 const BUTTON_VARIANTS: Record<ButtonVariant, string> = {
-	primary: "bg-indigo-600 text-white enabled:hover:bg-indigo-700",
+	primary:
+		"bg-indigo-600 bg-brand-gradient text-white shadow-sm shadow-indigo-600/25 enabled:hover:brightness-110 enabled:hover:shadow-md enabled:hover:shadow-indigo-600/30 enabled:active:brightness-95",
 	secondary:
-		"border border-zinc-300 bg-white text-zinc-900 enabled:hover:bg-zinc-100",
-	danger: "bg-red-600 text-white enabled:hover:bg-red-700"
+		"border border-zinc-300 bg-white text-zinc-900 shadow-sm enabled:hover:border-zinc-400 enabled:hover:bg-zinc-50",
+	danger: "bg-red-600 text-white shadow-sm enabled:hover:bg-red-700"
 };
 
 export function fieldHintId(htmlFor: string): string {
@@ -129,7 +130,7 @@ export function ErrorNote({ children }: ErrorNoteProps) {
 	return (
 		<div
 			role="alert"
-			className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-800"
+			className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800"
 		>
 			{children}
 		</div>

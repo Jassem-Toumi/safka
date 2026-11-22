@@ -125,7 +125,7 @@ export function AccountPicker() {
 				<button
 					type="button"
 					onClick={() => setAttempt((count) => count + 1)}
-					className="rounded-md border border-zinc-300 bg-white px-3 py-2 font-medium hover:bg-zinc-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+					className="rounded-lg border border-zinc-300 bg-white px-3 py-2 font-medium shadow-sm hover:bg-zinc-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
 				>
 					Try again
 				</button>
@@ -155,7 +155,7 @@ export function AccountPicker() {
 
 				return (
 					<section key={role} aria-labelledby={`role-${role}`}>
-						<h2 id={`role-${role}`} className="text-lg font-semibold">
+						<h2 id={`role-${role}`} className="text-lg font-semibold tracking-tight">
 							{heading}
 						</h2>
 						<p className="text-sm text-zinc-600">{hint}</p>
@@ -170,7 +170,7 @@ export function AccountPicker() {
 											onClick={() => handleSelect(account)}
 											disabled={isPending}
 											aria-busy={isThisPending}
-											className="flex min-h-12 w-full items-center justify-between rounded-lg border border-zinc-200 bg-white px-4 py-3 text-left font-medium shadow-sm hover:border-zinc-300 hover:bg-zinc-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:cursor-not-allowed disabled:opacity-60"
+											className="group flex min-h-12 w-full items-center justify-between rounded-xl border border-zinc-200 bg-white px-4 py-3 text-left font-medium shadow-sm transition hover:border-indigo-300 hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:cursor-not-allowed disabled:opacity-60"
 										>
 											<span>
 												<span className="sr-only">Sign in as </span>
@@ -178,7 +178,7 @@ export function AccountPicker() {
 											</span>
 											<span
 												aria-hidden="true"
-												className="text-sm font-normal text-zinc-500"
+												className="text-sm font-normal text-zinc-500 group-hover:text-indigo-700"
 											>
 												{isThisPending ? "Signing in…" : "Sign in"}
 											</span>

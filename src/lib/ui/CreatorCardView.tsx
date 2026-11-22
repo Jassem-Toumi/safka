@@ -133,7 +133,7 @@ export function CreatorCardView({
 	return (
 		<article
 			aria-labelledby={headingId}
-			className="min-w-0 rounded-lg border border-zinc-200 bg-white p-4 shadow-sm sm:p-5"
+			className="card min-w-0 p-4 transition-shadow hover:shadow-md sm:p-5"
 		>
 			<div className="flex items-start gap-3">
 				<Avatar name={creator.displayName} seed={creator.id} size={48} />
@@ -141,7 +141,7 @@ export function CreatorCardView({
 					<div className="flex flex-wrap items-center gap-x-2 gap-y-1">
 						<Heading
 							id={headingId}
-							className="text-lg font-semibold break-words"
+							className="text-lg font-semibold tracking-tight break-words"
 						>
 							{creator.displayName}
 						</Heading>
@@ -151,7 +151,7 @@ export function CreatorCardView({
 							</span>
 						) : null}
 					</div>
-					<p className="font-medium tabular-nums">
+					<p className="font-medium text-indigo-700 tabular-nums">
 						<span className="sr-only">Rate: </span>
 						{rateText(creator.rate)}
 					</p>

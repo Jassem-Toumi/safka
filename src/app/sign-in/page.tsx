@@ -13,7 +13,7 @@ export const metadata: Metadata = { title: "Sign in · Safka" };
 export default function SignInPage() {
 	return (
 		<main className="mx-auto max-w-md px-4 py-12 sm:py-16">
-			<h1 className="text-2xl font-semibold tracking-tight">Sign in to Safka</h1>
+			<h1 className="text-3xl font-bold tracking-tight text-zinc-950">Sign in to Safka</h1>
 			<p className="mt-2 text-zinc-600">
 				Choose a demo account. Open each role in its own browser profile, since
 				tabs in one profile share a session.

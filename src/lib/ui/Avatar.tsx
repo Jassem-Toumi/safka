@@ -28,25 +28,40 @@ export function Avatar({ name, seed, size = 40 }: AvatarProps) {
 	const [failedSeed, setFailedSeed] = useState<string | null>(null);
 	const dimensions = { width: size, height: size };
 
+	const initials = (
+		<span
+			aria-hidden="true"
+			className="inline-flex size-full items-center justify-center rounded-full bg-indigo-100 font-semibold text-indigo-800 select-none"
+			style={{ fontSize: Math.round(size * 0.4) }}
+		>
+			{initialsOf(name)}
+		</span>
+	);
+
 	if (failedSeed === seed) {
 		return (
-			<span
-				aria-hidden="true"
-				className="inline-flex shrink-0 items-center justify-center rounded-full bg-zinc-200 font-medium text-zinc-700 select-none"
-				style={{ ...dimensions, fontSize: Math.round(size * 0.4) }}
-			>
-				{initialsOf(name)}
+			<span aria-hidden="true" className="inline-flex shrink-0" style={dimensions}>
+				{initials}
 			</span>
 		);
 	}
 
+	// Initials sit under the image so the circle is never blank while the SVG
+	// loads or if it fails silently; the SVG's own background covers them.
 	return (
-		<img
-			src={`https://api.dicebear.com/9.x/notionists-neutral/svg?seed=${encodeURIComponent(seed)}`}
-			alt=""
-			{...dimensions}
-			onError={() => setFailedSeed(seed)}
-			className="shrink-0 rounded-full bg-zinc-100"
-		/>
+		<span
+			aria-hidden="true"
+			className="relative inline-flex shrink-0 rounded-full ring-1 ring-zinc-900/5"
+			style={dimensions}
+		>
+			{initials}
+			<img
+				src={`https://api.dicebear.com/9.x/notionists-neutral/svg?seed=${encodeURIComponent(seed)}&backgroundColor=e0e7ff`}
+				alt=""
+				{...dimensions}
+				onError={() => setFailedSeed(seed)}
+				className="absolute inset-0 rounded-full"
+			/>
+		</span>
 	);
 }
