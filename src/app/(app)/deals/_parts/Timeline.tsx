@@ -18,17 +18,17 @@ export function Timeline({ deal, viewerRole }: TimelineProps) {
 				Timeline
 			</h2>
 			{deal.timeline.length === 0 ? (
-				<p className="mt-2 text-zinc-600">Nothing has happened yet.</p>
+				<p className="mt-2 text-fg-muted">Nothing has happened yet.</p>
 			) : (
-				<ol className="mt-3 space-y-3 border-l border-zinc-200 pl-4">
+				<ol className="mt-3 space-y-3 border-l border-border pl-4">
 					{deal.timeline.map((event) => (
 						<li key={event.id} className="relative">
 							<span
 								aria-hidden="true"
-								className="absolute top-1.5 -left-[1.3rem] size-2.5 rounded-full bg-zinc-300"
+								className="absolute top-1.5 -left-[1.3rem] size-2.5 rounded-full bg-border-strong"
 							/>
 							<p className="font-medium">{humanizeEvent(event.action)}</p>
-							<p className="text-sm text-zinc-600">
+							<p className="text-sm text-fg-muted">
 								{actorName(deal, event.actorRole, viewerRole)}
 								<span aria-hidden="true"> · </span>
 								<span className="sr-only">, </span>
@@ -37,7 +37,7 @@ export function Timeline({ deal, viewerRole }: TimelineProps) {
 								</time>
 							</p>
 							{event.note !== null ? (
-								<p className="mt-0.5 text-sm break-words text-zinc-700">
+								<p className="mt-0.5 text-sm break-words text-fg-secondary">
 									{event.note}
 								</p>
 							) : null}

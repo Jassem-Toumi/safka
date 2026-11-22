@@ -29,16 +29,16 @@ export function BudgetBar({ budget }: BudgetBarProps) {
 		<div className="space-y-3">
 			<dl className="grid grid-cols-2 gap-3 sm:grid-cols-4">
 				<div>
-					<dt className="text-sm text-zinc-600">Total</dt>
+					<dt className="text-sm text-fg-muted">Total</dt>
 					<dd className="font-medium tabular-nums">
 						{formatCents(budget.budgetCents)}
 					</dd>
 				</div>
 				<div>
-					<dt className="flex items-center gap-1.5 text-sm text-zinc-600">
+					<dt className="flex items-center gap-1.5 text-sm text-fg-muted">
 						<span
 							aria-hidden="true"
-							className="size-2.5 rounded-sm bg-indigo-300"
+							className="size-2.5 rounded-sm bg-accent-muted"
 						/>
 						Committed
 					</dt>
@@ -47,10 +47,10 @@ export function BudgetBar({ budget }: BudgetBarProps) {
 					</dd>
 				</div>
 				<div>
-					<dt className="flex items-center gap-1.5 text-sm text-zinc-600">
+					<dt className="flex items-center gap-1.5 text-sm text-fg-muted">
 						<span
 							aria-hidden="true"
-							className="size-2.5 rounded-sm bg-indigo-700"
+							className="size-2.5 rounded-sm bg-accent"
 						/>
 						Spent
 					</dt>
@@ -59,7 +59,7 @@ export function BudgetBar({ budget }: BudgetBarProps) {
 					</dd>
 				</div>
 				<div>
-					<dt className="text-sm text-zinc-600">Remaining</dt>
+					<dt className="text-sm text-fg-muted">Remaining</dt>
 					<dd className="font-medium tabular-nums">
 						{formatCents(budget.remainingCents)}
 					</dd>
@@ -67,12 +67,12 @@ export function BudgetBar({ budget }: BudgetBarProps) {
 			</dl>
 			<div
 				aria-hidden="true"
-				className="flex h-2 overflow-hidden rounded-full bg-zinc-200"
+				className="flex h-2 overflow-hidden rounded-full bg-fill"
 			>
-				<div className="bg-indigo-700" style={{ width: `${spentPct}%` }} />
-				<div className="bg-indigo-300" style={{ width: `${committedPct}%` }} />
+				<div className="bg-accent" style={{ width: `${spentPct}%` }} />
+				<div className="bg-accent-muted" style={{ width: `${committedPct}%` }} />
 			</div>
-			<p className="text-sm text-zinc-500">Agreed deals reserve budget</p>
+			<p className="text-sm text-fg-subtle">Agreed deals reserve budget</p>
 		</div>
 	);
 }

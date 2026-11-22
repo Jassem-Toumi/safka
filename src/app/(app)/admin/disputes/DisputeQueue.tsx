@@ -15,12 +15,12 @@ import { useLoad } from "@/lib/ui/useLoad";
 
 function DisputeRow({ dispute }: { dispute: AdminDisputeSummary }) {
 	return (
-		<li className={`${CARD} relative hover:border-zinc-300 hover:bg-zinc-50`}>
+		<li className={`${CARD} relative hover:border-border-strong hover:bg-surface-2`}>
 			<div className="flex flex-wrap items-baseline justify-between gap-x-3">
 				<h3 className="font-semibold break-words">
 					<Link
 						href={`/admin/disputes/${dispute.id}`}
-						className="after:absolute after:inset-0 after:rounded-lg focus-visible:outline-none focus-visible:after:outline-2 focus-visible:after:outline-offset-2 focus-visible:after:outline-indigo-600"
+						className="after:absolute after:inset-0 after:rounded-lg focus-visible:outline-none focus-visible:after:outline-2 focus-visible:after:outline-offset-2 focus-visible:after:outline-focus"
 					>
 						{dispute.brand.displayName}
 						<span aria-hidden="true"> · </span>
@@ -33,17 +33,17 @@ function DisputeRow({ dispute }: { dispute: AdminDisputeSummary }) {
 					{formatCents(dispute.amountCents)}
 				</p>
 			</div>
-			<p className="mt-1 text-zinc-700">{issueCodeLabel(dispute.code)}</p>
+			<p className="mt-1 text-fg-secondary">{issueCodeLabel(dispute.code)}</p>
 			<div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
 				<PaymentChip status={dispute.paymentStatus} />
-				<span className="text-zinc-500">
+				<span className="text-fg-subtle">
 					Opened{" "}
 					<time dateTime={dispute.openedAt}>
 						{formatDateTime(dispute.openedAt)}
 					</time>
 				</span>
 				{dispute.resolvedAt !== null ? (
-					<span className="text-zinc-700">
+					<span className="text-fg-secondary">
 						{dispute.resolution === null
 							? "Resolved"
 							: actionLabel(dispute.resolution)}{" "}
@@ -78,7 +78,7 @@ export function DisputeQueue() {
 			) : null}
 
 			{groups === null && status === "loading" ? (
-				<p className="text-zinc-600" aria-live="polite">
+				<p className="text-fg-muted" aria-live="polite">
 					Loading disputes…
 				</p>
 			) : null}
@@ -90,7 +90,7 @@ export function DisputeQueue() {
 							Open cases ({groups.open.length})
 						</h2>
 						{groups.open.length === 0 ? (
-							<p className="text-zinc-600">No open cases.</p>
+							<p className="text-fg-muted">No open cases.</p>
 						) : (
 							<ul className="space-y-3">
 								{groups.open.map((dispute) => (
@@ -104,7 +104,7 @@ export function DisputeQueue() {
 							Resolved ({groups.resolved.length})
 						</h2>
 						{groups.resolved.length === 0 ? (
-							<p className="text-zinc-600">No resolved cases yet.</p>
+							<p className="text-fg-muted">No resolved cases yet.</p>
 						) : (
 							<ul className="space-y-3">
 								{groups.resolved.map((dispute) => (

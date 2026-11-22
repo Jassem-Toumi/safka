@@ -22,13 +22,13 @@ type ErrorNoteProps = {
 };
 
 const BUTTON_BASE =
-	"inline-flex min-h-11 items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:cursor-not-allowed disabled:opacity-60";
+	"inline-flex min-h-11 sm:min-h-9 items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus disabled:cursor-not-allowed disabled:opacity-60";
 
 const BUTTON_VARIANTS: Record<ButtonVariant, string> = {
-	primary: "bg-indigo-600 text-white enabled:hover:bg-indigo-700",
+	primary: "bg-accent text-accent-fg enabled:hover:bg-accent-hover",
 	secondary:
-		"border border-zinc-300 bg-white text-zinc-900 enabled:hover:bg-zinc-100",
-	danger: "bg-red-600 text-white enabled:hover:bg-red-700"
+		"border border-border-strong bg-surface text-fg enabled:hover:bg-surface-2",
+	danger: "bg-danger-solid text-white enabled:hover:bg-danger-solid-hover"
 };
 
 export function fieldHintId(htmlFor: string): string {
@@ -70,7 +70,7 @@ export function Field({ label, htmlFor, error, hint, children }: FieldProps) {
 				{label}
 			</label>
 			{hint ? (
-				<p id={fieldHintId(htmlFor)} className="text-sm text-zinc-600">
+				<p id={fieldHintId(htmlFor)} className="text-sm text-fg-muted">
 					{hint}
 				</p>
 			) : null}
@@ -79,7 +79,7 @@ export function Field({ label, htmlFor, error, hint, children }: FieldProps) {
 				<p
 					id={fieldErrorId(htmlFor)}
 					role="alert"
-					className="text-sm font-medium text-red-700"
+					className="text-sm font-medium text-danger"
 				>
 					{error}
 				</p>
@@ -129,7 +129,7 @@ export function ErrorNote({ children }: ErrorNoteProps) {
 	return (
 		<div
 			role="alert"
-			className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-800"
+			className="rounded-md border border-danger-line bg-danger-soft p-3 text-sm text-danger"
 		>
 			{children}
 		</div>

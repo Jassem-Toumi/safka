@@ -190,7 +190,7 @@ export function BriefFields({ form, errors, onChange, idPrefix }: BriefFieldsPro
 				className="space-y-2"
 			>
 				<legend className="text-sm font-medium">Formats</legend>
-				<p className="text-sm text-zinc-600">
+				<p className="text-sm text-fg-muted">
 					Optional. Leave all unchecked to accept any format.
 				</p>
 				<div className="grid grid-cols-2 gap-x-4 sm:grid-cols-4">
@@ -201,14 +201,14 @@ export function BriefFields({ form, errors, onChange, idPrefix }: BriefFieldsPro
 							<label
 								key={format}
 								htmlFor={id}
-								className="flex min-h-11 items-center gap-2 text-sm"
+								className="flex min-h-11 sm:min-h-9 items-center gap-2 text-sm"
 							>
 								<input
 									id={id}
 									type="checkbox"
 									checked={form.formats.includes(format)}
 									onChange={(event) => toggleFormat(format, event.target.checked)}
-									className="size-5 accent-indigo-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+									className="size-5 accent-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
 								/>
 								{FORMAT_LABELS[format]}
 							</label>
@@ -216,7 +216,7 @@ export function BriefFields({ form, errors, onChange, idPrefix }: BriefFieldsPro
 					})}
 				</div>
 				{errors.formats ? (
-					<p id={formatsErrorId} role="alert" className="text-sm font-medium text-red-700">
+					<p id={formatsErrorId} role="alert" className="text-sm font-medium text-danger">
 						{errors.formats}
 					</p>
 				) : null}

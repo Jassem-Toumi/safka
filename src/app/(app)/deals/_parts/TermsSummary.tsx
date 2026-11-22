@@ -21,7 +21,7 @@ function sentenceCase(value: string): string {
 function Row({ term, children }: { term: string; children: ReactNode }) {
 	return (
 		<div className="grid gap-1 sm:grid-cols-[10rem_minmax(0,1fr)] sm:gap-4">
-			<dt className="text-sm text-zinc-600">{term}</dt>
+			<dt className="text-sm text-fg-muted">{term}</dt>
 			<dd className="break-words">{children}</dd>
 		</div>
 	);
@@ -29,7 +29,7 @@ function Row({ term, children }: { term: string; children: ReactNode }) {
 
 function ItemList({ items }: { items: string[] }) {
 	if (items.length === 0) {
-		return <span className="text-zinc-500">None</span>;
+		return <span className="text-fg-subtle">None</span>;
 	}
 
 	return (
@@ -63,7 +63,7 @@ export function TermsSummary({ deal }: TermsSummaryProps) {
 				{deal.agreement === null ? "Proposed terms" : "Agreed terms"}
 			</h2>
 			{isNegotiating ? (
-				<p className="mt-1 text-sm text-zinc-600">
+				<p className="mt-1 text-sm text-fg-muted">
 					{proposal.revision === 1
 						? "Offer"
 						: `Counteroffer (proposal ${proposal.revision})`}{" "}
@@ -75,7 +75,7 @@ export function TermsSummary({ deal }: TermsSummaryProps) {
 				</p>
 			) : null}
 			{deal.agreement !== null ? (
-				<p className="mt-1 text-sm text-zinc-600">
+				<p className="mt-1 text-sm text-fg-muted">
 					Agreed{" "}
 					<time dateTime={deal.agreement.acceptedAt}>
 						{formatDateTime(deal.agreement.acceptedAt)}
@@ -87,7 +87,7 @@ export function TermsSummary({ deal }: TermsSummaryProps) {
 				<Row term="Product">
 					<span className="font-medium">{terms.product.name}</span>
 					{terms.product.description ? (
-						<span className="block text-sm text-zinc-700">
+						<span className="block text-sm text-fg-secondary">
 							{terms.product.description}
 						</span>
 					) : null}
@@ -104,7 +104,7 @@ export function TermsSummary({ deal }: TermsSummaryProps) {
 					<span className="whitespace-pre-line">{terms.brief}</span>
 				</Row>
 				<Row term="Suggested angle">
-					{terms.angle ?? <span className="text-zinc-500">None</span>}
+					{terms.angle ?? <span className="text-fg-subtle">None</span>}
 				</Row>
 				<Row term="Talking points">
 					<ItemList items={terms.talkingPoints} />
@@ -126,7 +126,7 @@ export function TermsSummary({ deal }: TermsSummaryProps) {
 				<Row term="First 7 days">
 					<span className="block">{target(terms.viewTarget, "views")}</span>
 					<span className="block">{target(terms.clickTarget, "clicks")}</span>
-					<span className="block text-sm text-zinc-500">
+					<span className="block text-sm text-fg-subtle">
 						Targets are advisory and don’t affect payment.
 					</span>
 				</Row>

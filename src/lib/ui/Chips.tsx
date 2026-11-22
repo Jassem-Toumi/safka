@@ -22,14 +22,14 @@ type OriginLabelProps = {
 };
 
 const CHIP_BASE =
-	"inline-flex items-center rounded-full px-2.5 py-0.5 text-sm font-medium ring-1 ring-inset";
+	"inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ring-1 ring-inset";
 
 const TONE_CLASSES: Record<StatusTone, string> = {
-	neutral: "bg-zinc-100 text-zinc-700 ring-zinc-300",
-	action: "bg-indigo-50 text-indigo-800 ring-indigo-200",
-	success: "bg-emerald-50 text-emerald-800 ring-emerald-200",
-	warning: "bg-amber-50 text-amber-900 ring-amber-300",
-	danger: "bg-red-50 text-red-800 ring-red-200"
+	neutral: "bg-surface-2 text-fg-secondary ring-border",
+	action: "bg-accent-soft text-accent-text ring-accent-line",
+	success: "bg-success-soft text-success ring-success-line",
+	warning: "bg-warning-soft text-warning ring-warning-line",
+	danger: "bg-danger-soft text-danger ring-danger-line"
 };
 
 const PAYMENT_TONES: Record<PaymentStatus, StatusTone> = {
@@ -40,9 +40,9 @@ const PAYMENT_TONES: Record<PaymentStatus, StatusTone> = {
 };
 
 const ORIGIN_CLASSES: Record<LabelOrigin, string> = {
-	PUBLIC: "bg-sky-50 text-sky-800 ring-sky-200",
-	CREATOR: "bg-zinc-100 text-zinc-700 ring-zinc-300",
-	SAMPLE: "bg-amber-100 text-amber-900 ring-amber-300"
+	PUBLIC: "bg-info-soft text-info ring-info-line",
+	CREATOR: "bg-surface-2 text-fg-secondary ring-border",
+	SAMPLE: "bg-warning-soft text-warning ring-warning-line"
 };
 
 /** The label text carries the meaning; color only reinforces it. */
@@ -57,7 +57,7 @@ export function StatusChip({ status, label }: StatusChipProps) {
 export function PaymentChip({ status }: PaymentChipProps) {
 	return (
 		<span className="inline-flex flex-wrap items-center gap-2">
-			<span className="text-sm text-zinc-600">Simulated payment</span>
+			<span className="text-sm text-fg-muted">Simulated payment</span>
 			<span className={`${CHIP_BASE} ${TONE_CLASSES[PAYMENT_TONES[status]]}`}>
 				{paymentLabel(status)}
 			</span>

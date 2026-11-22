@@ -46,7 +46,7 @@ const VIEWS_HINT =
 function CharacterCount({ length, max }: { length: number; max: number }) {
 	return (
 		<p
-			className={`text-right text-xs tabular-nums ${length > max ? "font-medium text-red-700" : "text-zinc-500"}`}
+			className={`text-right text-xs tabular-nums ${length > max ? "font-medium text-danger" : "text-fg-subtle"}`}
 		>
 			{length} / {max} characters
 		</p>
@@ -171,7 +171,7 @@ export function DetailsFields({
 					className={INPUT_CLASSES}
 				/>
 				{savedChannelUrl !== null ? (
-					<p className="text-sm text-zinc-600">
+					<p className="text-sm text-fg-muted">
 						Saved as{" "}
 						<ExternalLink href={savedChannelUrl}>{savedChannelUrl}</ExternalLink>
 					</p>
@@ -204,19 +204,19 @@ export function DetailsFields({
 					</Button>
 				</div>
 				{form.topics.length === 0 ? (
-					<p className="text-sm text-zinc-500">No topics yet.</p>
+					<p className="text-sm text-fg-subtle">No topics yet.</p>
 				) : (
 					<ul aria-label="Your topics" className="flex flex-wrap gap-2 pt-1">
 						{form.topics.map((topic) => (
 							<li
 								key={topic}
-								className="inline-flex items-center gap-1 rounded-full bg-zinc-100 py-0.5 pr-0.5 pl-3 text-sm ring-1 ring-zinc-300 ring-inset"
+								className="inline-flex items-center gap-1 rounded-full bg-surface-3 py-0.5 pr-0.5 pl-3 text-sm ring-1 ring-border-strong ring-inset"
 							>
 								<span>{topicLabel(topic)}</span>
 								<button
 									type="button"
 									onClick={() => handleRemoveTopic(topic)}
-									className="inline-flex size-8 items-center justify-center rounded-full text-zinc-600 hover:bg-zinc-200 hover:text-zinc-900 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-indigo-600"
+									className="inline-flex size-8 items-center justify-center rounded-full text-fg-muted hover:bg-fill hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-focus"
 								>
 									<span aria-hidden="true">×</span>
 									<span className="sr-only">Remove {topicLabel(topic)}</span>
@@ -234,7 +234,7 @@ export function DetailsFields({
 				className="space-y-1"
 			>
 				<legend className="text-sm font-medium">Formats</legend>
-				<p id={formatsHintId} className="text-sm text-zinc-600">
+				<p id={formatsHintId} className="text-sm text-fg-muted">
 					{FORMATS_HINT}
 				</p>
 				<div className="grid grid-cols-2 gap-2 pt-1 sm:grid-cols-4">
@@ -244,7 +244,7 @@ export function DetailsFields({
 						return (
 							<label
 								key={format}
-								className="flex min-h-11 items-center gap-2 rounded-md border border-zinc-300 px-3 text-sm has-checked:border-indigo-400 has-checked:bg-indigo-50 has-disabled:opacity-60"
+								className="flex min-h-11 sm:min-h-9 items-center gap-2 rounded-md border border-border-strong px-3 text-sm has-checked:border-accent has-checked:bg-accent-soft has-disabled:opacity-60"
 							>
 								<input
 									id={`profile-format-${format}`}
@@ -254,7 +254,7 @@ export function DetailsFields({
 									onChange={(event) =>
 										handleFormatToggle(format, event.target.checked)
 									}
-									className="size-4 accent-indigo-600"
+									className="size-4 accent-accent"
 								/>
 								{formatLabel(format)}
 							</label>
@@ -265,7 +265,7 @@ export function DetailsFields({
 					<p
 						id={formatsErrorId}
 						role="alert"
-						className="text-sm font-medium text-red-700"
+						className="text-sm font-medium text-danger"
 					>
 						{errors.formats}
 					</p>
@@ -274,7 +274,7 @@ export function DetailsFields({
 
 			<fieldset aria-describedby={rateHintId} className="space-y-1">
 				<legend className="text-sm font-medium">Rate (optional)</legend>
-				<p id={rateHintId} className="text-sm text-zinc-600">
+				<p id={rateHintId} className="text-sm text-fg-muted">
 					{RATE_HINT}
 				</p>
 				<div className="grid gap-3 pt-1 sm:grid-cols-2">

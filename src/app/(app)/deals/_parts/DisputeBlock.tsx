@@ -34,26 +34,26 @@ export function DisputeBlock({
 	return (
 		<section
 			aria-labelledby={headingId}
-			className={`${CARD} ${isResolved ? "" : "border-amber-300"}`}
+			className={`${CARD} ${isResolved ? "" : "border-warning-line"}`}
 		>
 			<h2 id={headingId} className="text-lg font-semibold">
 				{heading ?? (isResolved ? "Reported issue · Resolved" : "Reported issue · Under review")}
 			</h2>
 			{!isResolved ? (
-				<p className="mt-1 text-sm text-zinc-700">
+				<p className="mt-1 text-sm text-fg-secondary">
 					An admin is reviewing this. Normal deal actions are paused.
 				</p>
 			) : null}
 
 			<dl className="mt-3 grid gap-3 text-sm sm:grid-cols-2">
 				<div>
-					<dt className="text-zinc-600">Reported by</dt>
+					<dt className="text-fg-muted">Reported by</dt>
 					<dd className="font-medium">
 						{actorName(deal, dispute.openedByRole, viewerRole)}
 					</dd>
 				</div>
 				<div>
-					<dt className="text-zinc-600">Reported</dt>
+					<dt className="text-fg-muted">Reported</dt>
 					<dd>
 						<time dateTime={dispute.openedAt}>
 							{formatDateTime(dispute.openedAt)}
@@ -61,20 +61,20 @@ export function DisputeBlock({
 					</dd>
 				</div>
 				<div>
-					<dt className="text-zinc-600">Issue</dt>
+					<dt className="text-fg-muted">Issue</dt>
 					<dd className="font-medium">{issueCodeLabel(dispute.code)}</dd>
 				</div>
 				<div>
-					<dt className="text-zinc-600">Paused at</dt>
+					<dt className="text-fg-muted">Paused at</dt>
 					<dd>{pausedAt}</dd>
 				</div>
 				<div className="sm:col-span-2">
-					<dt className="text-zinc-600">Reason</dt>
+					<dt className="text-fg-muted">Reason</dt>
 					<dd className="break-words whitespace-pre-line">{dispute.reason}</dd>
 				</div>
 				{showPayment ? (
 					<div className="sm:col-span-2">
-						<dt className="text-zinc-600">Payment</dt>
+						<dt className="text-fg-muted">Payment</dt>
 						<dd className="mt-0.5">
 							<PaymentChip status={deal.paymentStatus} />
 						</dd>
@@ -83,7 +83,7 @@ export function DisputeBlock({
 			</dl>
 
 			{isResolved ? (
-				<div className="mt-4 rounded-md border border-zinc-200 bg-zinc-50 p-3 text-sm">
+				<div className="mt-4 rounded-md border border-border bg-bg p-3 text-sm">
 					<p className="font-medium">
 						Resolution: {dispute.resolution === null ? "Resolved" : actionLabel(dispute.resolution)}
 						{dispute.resolvedAt !== null ? (
@@ -96,7 +96,7 @@ export function DisputeBlock({
 						) : null}
 					</p>
 					{dispute.resolutionReason !== null ? (
-						<p className="mt-1 break-words whitespace-pre-line text-zinc-800">
+						<p className="mt-1 break-words whitespace-pre-line text-fg">
 							{dispute.resolutionReason}
 						</p>
 					) : null}

@@ -75,7 +75,7 @@ export function ProfileEditor({ mode }: ProfileEditorProps) {
 				<h1 className="text-2xl font-semibold tracking-tight">
 					{mode === "onboarding" ? "Set up your profile" : "Your profile"}
 				</h1>
-				<p className="text-zinc-600">{INTROS[mode]}</p>
+				<p className="text-fg-muted">{INTROS[mode]}</p>
 			</header>
 			{load.data !== null ? (
 				<EditorBody mode={mode} initialProfile={load.data} />
@@ -89,7 +89,7 @@ export function ProfileEditor({ mode }: ProfileEditorProps) {
 					</Button>
 				</div>
 			) : (
-				<p className="text-zinc-600" aria-live="polite">
+				<p className="text-fg-muted" aria-live="polite">
 					Loading your profile…
 				</p>
 			)}
@@ -418,7 +418,7 @@ function EditorBody({ mode, initialProfile }: EditorBodyProps) {
 			{staleNotice ? (
 				<div
 					role="alert"
-					className="rounded-md border border-amber-300 bg-amber-50 p-3 text-sm text-amber-950"
+					className="rounded-md border border-warning-line bg-warning-soft p-3 text-sm text-warning"
 				>
 					<p className="font-medium">
 						Your profile was changed somewhere else, so this wasn’t saved.
@@ -447,7 +447,7 @@ function EditorBody({ mode, initialProfile }: EditorBodyProps) {
 					onTopicError={handleTopicError}
 				/>
 				<ErrorNote>{saveError}</ErrorNote>
-				<div className="flex flex-wrap items-center gap-3 border-t border-zinc-100 pt-4">
+				<div className="flex flex-wrap items-center gap-3 border-t border-divider pt-4">
 					<Button
 						type="submit"
 						busy={saving}
@@ -456,7 +456,7 @@ function EditorBody({ mode, initialProfile }: EditorBodyProps) {
 					>
 						Save profile
 					</Button>
-					<p role="status" aria-live="polite" className="text-sm text-zinc-700">
+					<p role="status" aria-live="polite" className="text-sm text-fg-secondary">
 						{saveNotice ?? (dirty ? "You have unsaved changes." : "")}
 					</p>
 				</div>
@@ -467,7 +467,7 @@ function EditorBody({ mode, initialProfile }: EditorBodyProps) {
 					<h2 id="evidence-heading" className="text-lg font-semibold">
 						Public profile evidence
 					</h2>
-					<p className="text-sm text-zinc-600">
+					<p className="text-sm text-fg-muted">
 						The app looks up public sources about your saved channel with
 						You.com. Nothing appears on your profile until you choose it.
 					</p>
@@ -483,7 +483,7 @@ function EditorBody({ mode, initialProfile }: EditorBodyProps) {
 						Find public profile evidence
 					</Button>
 					{searchHint ? (
-						<p id="search-hint" className="text-sm text-zinc-600">
+						<p id="search-hint" className="text-sm text-fg-muted">
 							{searchHint}
 						</p>
 					) : null}
@@ -491,16 +491,16 @@ function EditorBody({ mode, initialProfile }: EditorBodyProps) {
 
 				<div aria-live="polite" role="status" className="text-sm">
 					{searching ? (
-						<p className="font-medium text-indigo-800">
+						<p className="font-medium text-accent-text">
 							Searching with You.com… You can keep editing your profile.
 						</p>
 					) : searchError !== null ? (
-						<p className="font-medium text-red-700">{searchError}</p>
+						<p className="font-medium text-danger">{searchError}</p>
 					) : result !== null ? (
 						<div className="space-y-1">
 							<p className="flex flex-wrap items-center gap-2">
 								<OriginLabel origin={enrichmentOrigin(result.mode)} />
-								<span className="text-zinc-600">
+								<span className="text-fg-muted">
 									Found on{" "}
 									<time dateTime={result.retrievedAt}>
 										{formatDateTime(result.retrievedAt)}
@@ -520,7 +520,7 @@ function EditorBody({ mode, initialProfile }: EditorBodyProps) {
 									formats by hand above.
 								</p>
 							) : (
-								<p className="font-medium text-red-700">
+								<p className="font-medium text-danger">
 									{enrichmentErrorText(result.errorCode)}
 								</p>
 							)}
@@ -535,7 +535,7 @@ function EditorBody({ mode, initialProfile }: EditorBodyProps) {
 				) : null}
 
 				{channelWarning !== null ? (
-					<p className="rounded-md border border-amber-300 bg-amber-50 p-3 text-sm text-amber-950">
+					<p className="rounded-md border border-warning-line bg-warning-soft p-3 text-sm text-warning">
 						{channelWarning}
 					</p>
 				) : null}
@@ -551,7 +551,7 @@ function EditorBody({ mode, initialProfile }: EditorBodyProps) {
 								return (
 									<li
 										key={evidence.id}
-										className="flex gap-3 rounded-md border border-zinc-200 p-3 has-checked:border-indigo-300 has-checked:bg-indigo-50/40"
+										className="flex gap-3 rounded-md border border-border p-3 has-checked:border-accent-line has-checked:bg-accent-soft"
 									>
 										<div className="flex shrink-0 flex-col items-center gap-1 pt-0.5">
 											<input
@@ -565,9 +565,9 @@ function EditorBody({ mode, initialProfile }: EditorBodyProps) {
 												onChange={(event) =>
 													handleEvidenceToggle(evidence.id, event.target.checked)
 												}
-												className="size-5 accent-indigo-600"
+												className="size-5 accent-accent"
 											/>
-											<label htmlFor={inputId} className="text-xs text-zinc-600">
+											<label htmlFor={inputId} className="text-xs text-fg-muted">
 												Keep<span className="sr-only">: {evidence.title}</span>
 											</label>
 										</div>
@@ -587,7 +587,7 @@ function EditorBody({ mode, initialProfile }: EditorBodyProps) {
 								>
 									Save profile
 								</Button>
-								<p className="text-sm text-zinc-600">
+								<p className="text-sm text-fg-muted">
 									Save to keep your choices.
 								</p>
 							</div>
@@ -597,7 +597,7 @@ function EditorBody({ mode, initialProfile }: EditorBodyProps) {
 
 				{suggestions.topics.length > 0 || suggestions.formats.length > 0 ? (
 					<div className="space-y-3">
-						<p className="text-sm text-zinc-600">
+						<p className="text-sm text-fg-muted">
 							Tick a suggestion to add it to your profile details. It shows as
 							sourced on your card only while you keep evidence that supports
 							it.
@@ -612,7 +612,7 @@ function EditorBody({ mode, initialProfile }: EditorBodyProps) {
 									{suggestions.topics.map((label) => (
 										<label
 											key={label.value}
-											className="inline-flex min-h-11 items-center gap-2 rounded-full border border-zinc-300 px-3 text-sm has-checked:border-indigo-400 has-checked:bg-indigo-50"
+											className="inline-flex min-h-11 sm:min-h-9 items-center gap-2 rounded-full border border-border-strong px-3 text-sm has-checked:border-accent has-checked:bg-accent-soft"
 										>
 											<input
 												type="checkbox"
@@ -620,7 +620,7 @@ function EditorBody({ mode, initialProfile }: EditorBodyProps) {
 												onChange={(event) =>
 													handleTopicSuggestion(label, event.target.checked)
 												}
-												className="size-4 accent-indigo-600"
+												className="size-4 accent-accent"
 											/>
 											{topicLabel(label.value)}
 										</label>
@@ -648,7 +648,7 @@ function EditorBody({ mode, initialProfile }: EditorBodyProps) {
 										return (
 											<label
 												key={label.value}
-												className="inline-flex min-h-11 items-center gap-2 rounded-full border border-zinc-300 px-3 text-sm has-checked:border-indigo-400 has-checked:bg-indigo-50 has-disabled:opacity-60"
+												className="inline-flex min-h-11 sm:min-h-9 items-center gap-2 rounded-full border border-border-strong px-3 text-sm has-checked:border-accent has-checked:bg-accent-soft has-disabled:opacity-60"
 											>
 												<input
 													type="checkbox"
@@ -659,7 +659,7 @@ function EditorBody({ mode, initialProfile }: EditorBodyProps) {
 													onChange={(event) =>
 														handleFormatSuggestion(label, event.target.checked)
 													}
-													className="size-4 accent-indigo-600"
+													className="size-4 accent-accent"
 												/>
 												{formatLabel(format)}
 											</label>
@@ -668,7 +668,7 @@ function EditorBody({ mode, initialProfile }: EditorBodyProps) {
 								</div>
 							</fieldset>
 						) : null}
-						<p aria-live="polite" className="text-sm text-amber-900 empty:hidden">
+						<p aria-live="polite" className="text-sm text-warning empty:hidden">
 							{suggestionNote}
 						</p>
 					</div>
@@ -680,11 +680,11 @@ function EditorBody({ mode, initialProfile }: EditorBodyProps) {
 					Listing
 				</h2>
 				<p>
-					<span className="text-zinc-600">Status: </span>
+					<span className="text-fg-muted">Status: </span>
 					<span className="font-medium">{visibilityText(profile.visibility)}</span>
 				</p>
 				{isListed && profile.hasUnpublishedChanges ? (
-					<p className="rounded-md border border-amber-300 bg-amber-50 p-3 text-sm text-amber-950">
+					<p className="rounded-md border border-warning-line bg-warning-soft p-3 text-sm text-warning">
 						You have unpublished changes. Brands see your last published
 						profile until you choose Publish changes.
 					</p>
@@ -698,23 +698,23 @@ function EditorBody({ mode, initialProfile }: EditorBodyProps) {
 							))}
 						</ul>
 						{dirty ? (
-							<p className="mt-1 text-zinc-600">Based on your last save.</p>
+							<p className="mt-1 text-fg-muted">Based on your last save.</p>
 						) : null}
 					</div>
 				) : null}
 				{!isListed ? (
-					<label className="flex min-h-11 items-start gap-3 text-sm">
+					<label className="flex min-h-11 sm:min-h-9 items-start gap-3 text-sm">
 						<input
 							type="checkbox"
 							checked={optIn}
 							onChange={(event) => setOptIn(event.target.checked)}
-							className="mt-0.5 size-5 accent-indigo-600"
+							className="mt-0.5 size-5 accent-accent"
 						/>
 						<span>
 							<span className="font-medium">
 								List my profile in the brand directory
 							</span>
-							<span className="block text-zinc-600">
+							<span className="block text-fg-muted">
 								Brands can find your published card and send you offers.
 							</span>
 						</span>
@@ -742,7 +742,7 @@ function EditorBody({ mode, initialProfile }: EditorBodyProps) {
 						) : null}
 					</ErrorNote>
 				) : null}
-				<p role="status" aria-live="polite" className="text-sm text-emerald-800 empty:hidden">
+				<p role="status" aria-live="polite" className="text-sm text-success empty:hidden">
 					{listingNotice}
 				</p>
 			</section>

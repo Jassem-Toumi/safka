@@ -175,7 +175,7 @@ export function CampaignBuilder() {
 					</Link>
 				</p>
 				<h1 className="mt-2 text-2xl font-semibold tracking-tight">New campaign</h1>
-				<p className="mt-1 text-zinc-600">
+				<p className="mt-1 text-fg-muted">
 					Describe what you want. You review every field before anything is saved.
 				</p>
 			</div>
@@ -195,7 +195,7 @@ export function CampaignBuilder() {
 
 				{hasNoProducts ? (
 					<div className="space-y-3">
-						<p className="text-zinc-700">Add the product this campaign promotes.</p>
+						<p className="text-fg-secondary">Add the product this campaign promotes.</p>
 						<ProductForm onCreated={handleProductCreated} submitLabel="Add product" />
 					</div>
 				) : null}
@@ -227,7 +227,7 @@ export function CampaignBuilder() {
 							</select>
 						</Field>
 						{isAddingProduct ? (
-							<div className="rounded-md border border-zinc-200 p-4">
+							<div className="rounded-md border border-border p-4">
 								<h3 className="mb-3 font-medium">New product</h3>
 								<ProductForm
 									onCreated={handleProductCreated}
@@ -239,7 +239,7 @@ export function CampaignBuilder() {
 							<button
 								type="button"
 								onClick={() => setIsAddingProduct(true)}
-								className={`min-h-11 text-sm ${LINK_CLASSES}`}
+								className={`min-h-11 sm:min-h-9 text-sm ${LINK_CLASSES}`}
 							>
 								Add another product
 							</button>
@@ -300,13 +300,13 @@ export function CampaignBuilder() {
 							{mode === null ? "Campaign brief" : "Suggested brief"}
 						</h2>
 						{mode !== null ? (
-							<span className="rounded bg-indigo-50 px-1.5 py-0.5 text-xs font-medium text-indigo-800 ring-1 ring-indigo-200 ring-inset">
+							<span className="rounded bg-accent-soft px-1.5 py-0.5 text-xs font-medium text-accent-text ring-1 ring-accent-line ring-inset">
 								{MODE_TAGS[mode]}
 							</span>
 						) : null}
 					</div>
 					{mode !== null ? (
-						<p className="text-sm text-zinc-600">
+						<p className="text-sm text-fg-muted">
 							A starting point from your prompt. Check every field; blanks need your input.
 						</p>
 					) : null}
@@ -327,11 +327,11 @@ export function CampaignBuilder() {
 							<ErrorNote>{errors.form}</ErrorNote>
 						)}
 
-						<div className="flex flex-col gap-2 border-t border-zinc-100 pt-5 sm:flex-row sm:items-center">
+						<div className="flex flex-col gap-2 border-t border-divider pt-5 sm:flex-row sm:items-center">
 							<Button type="submit" busy={isConfirming} busyLabel="Saving…">
 								Confirm and find creators
 							</Button>
-							<p className="text-sm text-zinc-600">
+							<p className="text-sm text-fg-muted">
 								Saves the campaign and ranks listed creators against it.
 							</p>
 						</div>

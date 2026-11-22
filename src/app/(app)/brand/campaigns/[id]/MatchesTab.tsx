@@ -46,8 +46,8 @@ function MatchItem({
 	const canOffer = campaign.status === "ACTIVE";
 
 	return (
-		<li className="space-y-3 rounded-xl border border-zinc-200 bg-zinc-50 p-2 sm:p-3">
-			<p className="px-2 text-sm font-medium text-zinc-700">
+		<li className="space-y-3 rounded-lg border border-border bg-bg p-2 sm:p-3">
+			<p className="px-2 text-sm font-medium text-fg-secondary">
 				Match {rank} · {match.topicMatchPct}% topic match ·{" "}
 				{rateFitLabel(match.rateFit)}
 				{match.formatMatch ? " · Makes a requested format" : ""}
@@ -57,12 +57,12 @@ function MatchItem({
 
 			<section
 				aria-label={`Why ${creator.displayName}`}
-				className="space-y-4 rounded-lg border border-zinc-200 bg-white p-4 sm:p-5"
+				className="space-y-4 rounded-lg border border-border bg-surface p-4 sm:p-5"
 			>
 				<div>
 					<h4 className="font-semibold">Why this creator</h4>
 					{match.reasons.length === 0 ? (
-						<p className="mt-1 text-sm text-zinc-600">No reasons given.</p>
+						<p className="mt-1 text-sm text-fg-muted">No reasons given.</p>
 					) : (
 						<ul className="mt-2 space-y-3">
 							{match.reasons.map((reason, index) => {
@@ -81,7 +81,7 @@ function MatchItem({
 											) : null}
 										</p>
 										{sources.length > 0 ? (
-											<ul className="space-y-2 border-l-2 border-zinc-200 pl-3">
+											<ul className="space-y-2 border-l-2 border-border pl-3">
 												{sources.map((evidence) => (
 													<li key={evidence.id}>
 														<EvidenceRow evidence={evidence} />
@@ -98,19 +98,19 @@ function MatchItem({
 
 				<div>
 					<h4 className="font-semibold">Suggested video angle</h4>
-					<p className="text-sm text-zinc-600">
+					<p className="text-sm text-fg-muted">
 						A suggestion for the creator. You can edit it in the offer.
 					</p>
 					<p className="mt-1">
 						{match.angle ?? (
-							<span className="text-zinc-500">
+							<span className="text-fg-subtle">
 								None suggested. You can write one in the offer.
 							</span>
 						)}
 					</p>
 				</div>
 
-				<div className="border-t border-zinc-100 pt-4">
+				<div className="border-t border-divider pt-4">
 					<Button
 						onClick={onToggle}
 						disabled={!canOffer}
@@ -121,7 +121,7 @@ function MatchItem({
 						<span className="sr-only"> to {creator.displayName}</span>
 					</Button>
 					{!canOffer ? (
-						<p className="mt-2 text-sm text-zinc-600">
+						<p className="mt-2 text-sm text-fg-muted">
 							Offers can only be sent from an active campaign.
 						</p>
 					) : null}
@@ -168,9 +168,9 @@ export function MatchesTab({ campaign }: MatchesTabProps) {
 
 	if (items.length === 0) {
 		return (
-			<div className="space-y-3 rounded-lg border border-dashed border-zinc-300 bg-white p-6 text-center">
+			<div className="space-y-3 rounded-lg border border-dashed border-border-strong bg-surface p-6 text-center">
 				<p className="font-medium">No listed creators match this brief yet.</p>
-				<p className="text-sm text-zinc-600">
+				<p className="text-sm text-fg-muted">
 					Try broader topics, or browse the directory.
 				</p>
 				<div className="flex flex-wrap justify-center gap-2">
@@ -187,7 +187,7 @@ export function MatchesTab({ campaign }: MatchesTabProps) {
 
 	return (
 		<div className="space-y-3">
-			<p className="text-sm text-zinc-600" aria-live="polite">
+			<p className="text-sm text-fg-muted" aria-live="polite">
 				{items.length} {items.length === 1 ? "creator" : "creators"}, best
 				match first.
 			</p>

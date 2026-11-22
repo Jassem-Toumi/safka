@@ -134,8 +134,8 @@ export function DraftUploader({ deal, runner }: ActionProps) {
 				{UPLOAD_LIMITS.maxBatches}
 			</h3>
 			{feedback !== null ? (
-				<div className="rounded-md border border-amber-300 bg-amber-50 p-3 text-sm">
-					<p className="font-medium text-amber-900">
+				<div className="rounded-md border border-warning-line bg-warning-soft p-3 text-sm">
+					<p className="font-medium text-warning">
 						Feedback from {deal.brand.displayName}
 					</p>
 					<p className="mt-1 whitespace-pre-line">{feedback}</p>
@@ -146,7 +146,7 @@ export function DraftUploader({ deal, runner }: ActionProps) {
 				<label htmlFor={inputId} className="block text-sm font-medium">
 					Draft videos
 				</label>
-				<p id={`${inputId}-hint`} className="text-sm text-zinc-600">
+				<p id={`${inputId}-hint`} className="text-sm text-fg-muted">
 					One or two MP4 options, up to {limit} each.
 				</p>
 				<input
@@ -157,7 +157,7 @@ export function DraftUploader({ deal, runner }: ActionProps) {
 					onChange={handlePick}
 					disabled={picks.length >= MAX_FILES || runner.pending !== null}
 					aria-describedby={`${inputId}-hint`}
-					className="block w-full text-sm file:mr-3 file:min-h-11 file:cursor-pointer file:rounded-md file:border-0 file:bg-indigo-50 file:px-4 file:font-medium file:text-indigo-800 hover:file:bg-indigo-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-60"
+					className="block w-full text-sm file:mr-3 file:min-h-11 file:cursor-pointer file:rounded-md file:border-0 file:bg-accent-soft file:px-4 file:font-medium file:text-accent-text hover:file:bg-accent-soft-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus disabled:opacity-60"
 				/>
 			</div>
 			{pickError !== null ? <FocusAlert>{pickError}</FocusAlert> : null}
@@ -167,7 +167,7 @@ export function DraftUploader({ deal, runner }: ActionProps) {
 					{picks.map((pick, index) => (
 						<li
 							key={pick.localId}
-							className="space-y-2 rounded-md border border-zinc-200 p-3"
+							className="space-y-2 rounded-md border border-border p-3"
 						>
 							<p className="text-sm break-words">
 								<span className="font-medium">Option {index + 1}</span> ·{" "}
@@ -183,15 +183,15 @@ export function DraftUploader({ deal, runner }: ActionProps) {
 							/>
 							<p aria-live="polite" className="text-sm">
 								{pick.status === "uploading" ? (
-									<span className="text-zinc-600">Uploading…</span>
+									<span className="text-fg-muted">Uploading…</span>
 								) : null}
 								{pick.status === "ready" ? (
-									<span className="font-medium text-emerald-800">
+									<span className="font-medium text-success">
 										<span aria-hidden="true">✓ </span>Ready
 									</span>
 								) : null}
 								{pick.status === "failed" ? (
-									<span className="font-medium text-red-700">
+									<span className="font-medium text-danger">
 										Failed — {pick.error}
 									</span>
 								) : null}

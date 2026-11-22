@@ -103,7 +103,7 @@ export function CreatorDirectory() {
 		<div className="space-y-6">
 			<div>
 				<h1 className="text-2xl font-semibold tracking-tight">Creators</h1>
-				<p className="mt-1 text-zinc-600">
+				<p className="mt-1 text-fg-muted">
 					Listed YouTube creators. Each fact shows where it came from.
 				</p>
 			</div>
@@ -112,7 +112,7 @@ export function CreatorDirectory() {
 				role="search"
 				aria-label="Filter creators"
 				onSubmit={handleSubmit}
-				className="grid gap-3 rounded-lg border border-zinc-200 bg-white p-4 sm:grid-cols-[2fr_1fr_1fr_auto] sm:items-end"
+				className="grid gap-3 rounded-lg border border-border bg-surface p-4 sm:grid-cols-[2fr_1fr_1fr_auto] sm:items-end"
 			>
 				<div className="space-y-1">
 					<label htmlFor="creator-q" className="block text-sm font-medium">
@@ -191,7 +191,7 @@ export function CreatorDirectory() {
 			) : null}
 
 			{creators.status === "ready" && items.length === 0 ? (
-				<div className="space-y-3 rounded-lg border border-dashed border-zinc-300 bg-white p-6 text-center">
+				<div className="space-y-3 rounded-lg border border-dashed border-border-strong bg-surface p-6 text-center">
 					<p className="font-medium">
 						{hasFilters
 							? "No creators match these filters."

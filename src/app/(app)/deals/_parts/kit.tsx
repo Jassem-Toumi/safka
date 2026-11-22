@@ -6,21 +6,21 @@ import type { ActorRole, Deal, Role } from "@/shared/contracts";
 import { useEffect, useRef } from "react";
 
 export const CARD =
-	"min-w-0 rounded-lg border border-zinc-200 bg-white p-4 shadow-sm sm:p-5";
+	"min-w-0 rounded-lg border border-border bg-surface p-4 shadow-panel sm:p-5";
 
 export const LINK =
-	"font-medium text-indigo-700 underline underline-offset-4 hover:text-indigo-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600";
+	"font-medium text-accent-text underline underline-offset-4 hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus";
 
 export const INPUT =
-	"block min-h-11 w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-base focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-indigo-600 aria-invalid:border-red-600 sm:text-sm";
+	"block min-h-11 sm:min-h-9 w-full rounded-md border border-border-strong bg-surface dark:bg-surface-2 px-3 py-2 text-base focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-focus aria-invalid:border-danger sm:text-sm";
 
 type TagTone = "sample" | "warning" | "success" | "neutral";
 
 const TAG_TONES: Record<TagTone, string> = {
-	sample: "bg-amber-100 text-amber-900 ring-amber-300",
-	warning: "bg-red-50 text-red-800 ring-red-200",
-	success: "bg-emerald-50 text-emerald-800 ring-emerald-200",
-	neutral: "bg-zinc-100 text-zinc-700 ring-zinc-300"
+	sample: "bg-warning-soft text-warning ring-warning-line",
+	warning: "bg-danger-soft text-danger ring-danger-line",
+	success: "bg-success-soft text-success ring-success-line",
+	neutral: "bg-surface-3 text-fg-secondary ring-border-strong"
 };
 
 export function Tag({
@@ -56,7 +56,7 @@ export function FocusAlert({ children }: { children: ReactNode }) {
 			ref={ref}
 			tabIndex={-1}
 			role="alert"
-			className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+			className="rounded-md border border-danger-line bg-danger-soft p-3 text-sm text-danger focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-danger"
 		>
 			{children}
 		</div>

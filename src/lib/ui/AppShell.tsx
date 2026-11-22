@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import { ApiError, getMe, signOut } from "@/lib/api";
 import { canOpenPath, homePathFor } from "@/lib/routing";
 import { MeProvider } from "@/lib/ui/me";
+import { ThemeSwitcher } from "@/lib/ui/ThemeSwitcher";
 
 type NavItem = { href: string; label: string };
 
@@ -115,7 +116,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 					<p>We couldn’t load your account. {state.message}</p>
 					<Link
 						href="/sign-in"
-						className="font-medium text-indigo-700 underline underline-offset-4"
+						className="font-medium text-accent-text underline underline-offset-4"
 					>
 						Go to sign in
 					</Link>
@@ -127,18 +128,18 @@ export function AppShell({ children }: { children: ReactNode }) {
 	if (me === null || !isAllowed) {
 		return (
 			<main className="mx-auto max-w-md px-4 py-16" aria-live="polite">
-				<p className="text-zinc-600">Loading…</p>
+				<p className="text-fg-muted">Loading…</p>
 			</main>
 		);
 	}
 
 	return (
 		<MeProvider me={me}>
-			<header className="border-b border-zinc-200 bg-white">
-				<div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-2 px-4 py-3">
+			<header className="border-b border-border bg-surface">
+				<div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-2 px-4 py-2.5">
 					<Link
 						href={homePathFor(me)}
-						className="text-lg font-semibold tracking-tight focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+						className="rounded-sm text-base font-semibold tracking-tight focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
 					>
 						Safka
 					</Link>
@@ -153,10 +154,10 @@ export function AppShell({ children }: { children: ReactNode }) {
 										<Link
 											href={href}
 											aria-current={current ? "page" : undefined}
-											className={`inline-flex min-h-10 items-center rounded-md px-2 text-sm font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 ${
+											className={`inline-flex min-h-10 sm:min-h-8 items-center rounded-md px-2 text-sm font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus ${
 												current
-													? "bg-zinc-100 text-zinc-900"
-													: "text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900"
+													? "bg-surface-3 text-fg"
+													: "text-fg-muted hover:bg-surface-2 hover:text-fg"
 											}`}
 										>
 											{label}
@@ -168,16 +169,17 @@ export function AppShell({ children }: { children: ReactNode }) {
 					</nav>
 
 					<div className="ml-auto flex items-center gap-3">
+						<ThemeSwitcher />
 						<p className="text-right text-sm leading-tight">
 							<span className="block font-medium">{me.displayName}</span>
-							<span className="block text-zinc-500">{ROLE_NAMES[me.role]}</span>
+							<span className="block text-fg-subtle">{ROLE_NAMES[me.role]}</span>
 						</p>
 						<button
 							type="button"
 							onClick={handleSwitchAccount}
 							disabled={isSwitching}
 							aria-busy={isSwitching}
-							className="min-h-10 rounded-md border border-zinc-300 bg-white px-3 text-sm font-medium hover:bg-zinc-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-60"
+							className="min-h-10 sm:min-h-8 rounded-md border border-border-strong bg-surface px-3 text-sm font-medium hover:bg-surface-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus disabled:opacity-60"
 						>
 							{isSwitching ? "Switching…" : "Switch account"}
 						</button>

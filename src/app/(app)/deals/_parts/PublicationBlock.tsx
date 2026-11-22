@@ -38,7 +38,7 @@ export function PublicationBlock({ deal, viewerRole }: PublicationBlockProps) {
 			</p>
 			<dl className="mt-3 grid gap-3 text-sm sm:grid-cols-2">
 				<div>
-					<dt className="text-zinc-600">Went live</dt>
+					<dt className="text-fg-muted">Went live</dt>
 					<dd>
 						<time dateTime={publication.publishedAt}>
 							{formatDateTime(publication.publishedAt)}
@@ -46,7 +46,7 @@ export function PublicationBlock({ deal, viewerRole }: PublicationBlockProps) {
 					</dd>
 				</div>
 				<div>
-					<dt className="text-zinc-600">Link submitted</dt>
+					<dt className="text-fg-muted">Link submitted</dt>
 					<dd>
 						<time dateTime={publication.submittedAt}>
 							{formatDateTime(publication.submittedAt)}
@@ -54,7 +54,7 @@ export function PublicationBlock({ deal, viewerRole }: PublicationBlockProps) {
 					</dd>
 				</div>
 			</dl>
-			<p className="mt-3 text-sm text-zinc-700">
+			<p className="mt-3 text-sm text-fg-secondary">
 				{deal.creator.displayName} confirmed they used the approved draft and
 				followed the offer requirements.
 			</p>
@@ -70,18 +70,18 @@ export function PublicationBlock({ deal, viewerRole }: PublicationBlockProps) {
 							{role === viewerRole ? " (you)" : ""}
 						</span>
 						{confirmedAt !== null ? (
-							<span className="text-emerald-800">
+							<span className="text-success">
 								<span aria-hidden="true">✓ </span>Confirmed{" "}
 								<time dateTime={confirmedAt}>{formatDateTime(confirmedAt)}</time>
 							</span>
 						) : (
-							<span className="text-zinc-600">Not confirmed yet</span>
+							<span className="text-fg-muted">Not confirmed yet</span>
 						)}
 					</li>
 				))}
 			</ul>
 			{confirmedCount < 2 && deal.status === "PUBLISHED" ? (
-				<p className="mt-2 text-sm text-zinc-600">
+				<p className="mt-2 text-sm text-fg-muted">
 					The simulated payment is released when both have confirmed.
 				</p>
 			) : null}

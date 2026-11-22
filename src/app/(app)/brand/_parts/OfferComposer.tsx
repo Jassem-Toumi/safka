@@ -70,7 +70,7 @@ function zoneFor(localValue: string): string {
 function SummaryRow({ term, children }: { term: string; children: ReactNode }) {
 	return (
 		<div className="grid gap-1 py-2 sm:grid-cols-[10rem_1fr] sm:gap-4">
-			<dt className="text-sm text-zinc-600">{term}</dt>
+			<dt className="text-sm text-fg-muted">{term}</dt>
 			<dd className="min-w-0 break-words">{children}</dd>
 		</div>
 	);
@@ -78,7 +78,7 @@ function SummaryRow({ term, children }: { term: string; children: ReactNode }) {
 
 function SummaryList({ items }: { items: string[] }) {
 	if (items.length === 0) {
-		return <span className="text-zinc-500">None</span>;
+		return <span className="text-fg-subtle">None</span>;
 	}
 
 	return (
@@ -308,7 +308,7 @@ export function OfferComposer({
 	return (
 		<section
 			aria-labelledby={`${id}-heading`}
-			className="space-y-5 rounded-lg border border-indigo-200 bg-white p-4 shadow-sm sm:p-5"
+			className="space-y-5 rounded-lg border border-accent-line bg-surface p-4 shadow-panel sm:p-5"
 		>
 			<div className="flex flex-wrap items-start justify-between gap-2">
 				<h3
@@ -337,13 +337,13 @@ export function OfferComposer({
 			) : null}
 
 			{latestCampaign.status === "failed" ? (
-				<p role="alert" className="text-sm text-amber-900">
+				<p role="alert" className="text-sm text-warning">
 					Couldn’t refresh the campaign budget, so the remaining amount may be
 					out of date.{" "}
 					<button
 						type="button"
 						onClick={latestCampaign.reload}
-						className={`min-h-11 ${LINK_CLASSES}`}
+						className={`min-h-11 sm:min-h-9 ${LINK_CLASSES}`}
 					>
 						Check again
 					</button>
@@ -386,8 +386,8 @@ export function OfferComposer({
 							) : null}
 						</Field>
 					) : (
-						<p className="text-sm text-zinc-700">
-							<span className="text-zinc-600">Product: </span>
+						<p className="text-sm text-fg-secondary">
+							<span className="text-fg-muted">Product: </span>
 							<span className="font-medium">{product?.name ?? "…"}</span>
 						</p>
 					)}
@@ -584,12 +584,12 @@ export function OfferComposer({
 
 					<ErrorNote>{errors.form}</ErrorNote>
 
-					<div className="flex flex-col gap-2 border-t border-zinc-100 pt-4 sm:flex-row sm:items-center">
+					<div className="flex flex-col gap-2 border-t border-divider pt-4 sm:flex-row sm:items-center">
 						<Button type="submit" disabled={isOverBudget || product === null}>
 							Review offer
 						</Button>
 						{isOverBudget ? (
-							<p className="text-sm text-red-700">
+							<p className="text-sm text-danger">
 								The price is more than the campaign has left.
 							</p>
 						) : null}
@@ -605,7 +605,7 @@ export function OfferComposer({
 						>
 							What {creator.displayName} will see
 						</h4>
-						<p className="mt-1 text-sm text-zinc-600">
+						<p className="mt-1 text-sm text-fg-muted">
 							They can accept, decline or counter with a different price, dates
 							or angle. The offer expires after {PROPOSAL_TTL_DAYS} days.
 							{isDirect
@@ -614,14 +614,14 @@ export function OfferComposer({
 						</p>
 					</div>
 
-					<dl className="divide-y divide-zinc-100 rounded-md border border-zinc-200 px-3">
+					<dl className="divide-y divide-divider rounded-md border border-border px-3">
 						<SummaryRow term="Product">{review.product.name}</SummaryRow>
 						<SummaryRow term="Price">
 							<span className="font-medium tabular-nums">
 								{formatCents(review.terms.amountCents)}
 							</span>
 							{remainingCents !== null ? (
-								<span className="text-sm text-zinc-600">
+								<span className="text-sm text-fg-muted">
 									{" "}
 									· {formatCents(remainingCents)} left in the campaign
 								</span>
@@ -632,7 +632,7 @@ export function OfferComposer({
 						</SummaryRow>
 						<SummaryRow term="Brief">{review.terms.brief}</SummaryRow>
 						<SummaryRow term="Suggested angle">
-							{review.terms.angle ?? <span className="text-zinc-500">None</span>}
+							{review.terms.angle ?? <span className="text-fg-subtle">None</span>}
 						</SummaryRow>
 						<SummaryRow term="Talking points">
 							<SummaryList items={review.terms.talkingPoints} />
@@ -650,7 +650,7 @@ export function OfferComposer({
 						<SummaryRow term="7-day targets">
 							{review.terms.viewTarget === null &&
 							review.terms.clickTarget === null ? (
-								<span className="text-zinc-500">None</span>
+								<span className="text-fg-subtle">None</span>
 							) : (
 								[
 									review.terms.viewTarget === null
@@ -670,7 +670,7 @@ export function OfferComposer({
 					{existingOffer !== null ? (
 						<div
 							role="alert"
-							className="space-y-1 rounded-md border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900"
+							className="space-y-1 rounded-md border border-warning-line bg-warning-soft p-3 text-sm text-warning"
 						>
 							<p>You already have an open offer with {creator.displayName}.</p>
 							<Link href={existingOffer.href} className={LINK_CLASSES}>

@@ -80,7 +80,7 @@ function ResolutionForm({ deal, dispute, runner }: ResolutionFormProps) {
 
 	if (actions.length === 0) {
 		return (
-			<p className="text-zinc-700">
+			<p className="text-fg-secondary">
 				No resolution is available for this case right now.
 			</p>
 		);
@@ -93,7 +93,7 @@ function ResolutionForm({ deal, dispute, runner }: ResolutionFormProps) {
 			className="space-y-4"
 		>
 			<div className="flex flex-wrap items-center gap-2 text-sm">
-				<span className="text-zinc-600">Current:</span>
+				<span className="text-fg-muted">Current:</span>
 				<PaymentChip status={deal.paymentStatus} />
 			</div>
 			<Field
@@ -130,7 +130,7 @@ function ResolutionForm({ deal, dispute, runner }: ResolutionFormProps) {
 						>
 							{actionLabel(action)}
 						</Button>
-						<p className="text-sm text-zinc-600">
+						<p className="text-sm text-fg-muted">
 							{resolutionEffect(action, deal)}
 						</p>
 					</li>
@@ -181,7 +181,7 @@ export function DisputeCase() {
 					<h1 className="text-2xl font-semibold tracking-tight">
 						{isMissing ? "Case not found" : "We couldn’t load this case"}
 					</h1>
-					<p className="text-zinc-700">
+					<p className="text-fg-secondary">
 						{isMissing ? "This dispute doesn’t exist." : load.error.message}
 					</p>
 					<div className="flex flex-wrap items-center gap-4">
@@ -199,7 +199,7 @@ export function DisputeCase() {
 		}
 
 		return (
-			<p className="text-zinc-600" aria-live="polite">
+			<p className="text-fg-muted" aria-live="polite">
 				Loading case…
 			</p>
 		);
@@ -240,7 +240,7 @@ export function DisputeCase() {
 							{isResolved ? (
 								<div className="space-y-2">
 									<p className="flex flex-wrap items-center gap-2">
-										<span className="text-sm text-zinc-600">Deal is now</span>
+										<span className="text-sm text-fg-muted">Deal is now</span>
 										<StatusChip
 											status={deal.status}
 											label={dealHeadline(deal, "ADMIN")}
@@ -254,7 +254,7 @@ export function DisputeCase() {
 										</p>
 									) : null}
 									{runner.announcement !== "" && lastEvent !== undefined ? (
-										<p className="text-sm text-emerald-800">
+										<p className="text-sm text-success">
 											Added to the timeline: {humanizeEvent(lastEvent.action)}
 											{lastEvent.note !== null ? ` · ${lastEvent.note}` : ""}
 										</p>
@@ -263,7 +263,7 @@ export function DisputeCase() {
 							) : null}
 						</div>
 						{runner.notice !== null ? (
-							<p role="alert" className="text-sm text-amber-900">
+							<p role="alert" className="text-sm text-warning">
 								{runner.notice.message}
 							</p>
 						) : null}

@@ -230,7 +230,7 @@ export function ApproveDraftForm({ deal, runner }: ActionProps) {
 				aria-describedby={choiceError ? `${id}-error` : undefined}
 			>
 				<legend className="font-semibold">Approve a draft</legend>
-				<p className="text-sm text-zinc-600">
+				<p className="text-sm text-fg-muted">
 					<a href="#drafts" className="underline underline-offset-4">
 						Watch the drafts
 					</a>{" "}
@@ -239,7 +239,7 @@ export function ApproveDraftForm({ deal, runner }: ActionProps) {
 				{assets.map((asset, index) => (
 					<label
 						key={asset.id}
-						className="flex min-h-11 cursor-pointer items-center gap-3 rounded-md border border-zinc-300 px-3 py-2 has-checked:border-indigo-600 has-checked:bg-indigo-50"
+						className="flex min-h-11 sm:min-h-9 cursor-pointer items-center gap-3 rounded-md border border-border-strong px-3 py-2 has-checked:border-accent has-checked:bg-accent-soft"
 					>
 						<input
 							type="radio"
@@ -247,11 +247,11 @@ export function ApproveDraftForm({ deal, runner }: ActionProps) {
 							value={asset.id}
 							checked={selected === asset.id}
 							onChange={() => setSelected(asset.id)}
-							className="size-4 accent-indigo-600"
+							className="size-4 accent-accent"
 						/>
 						<span className="min-w-0 break-words">
 							<span className="font-medium">Option {index + 1}</span>
-							<span className="text-sm text-zinc-600"> · {asset.label}</span>
+							<span className="text-sm text-fg-muted"> · {asset.label}</span>
 						</span>
 					</label>
 				))}
@@ -259,7 +259,7 @@ export function ApproveDraftForm({ deal, runner }: ActionProps) {
 					<p
 						id={`${id}-error`}
 						role="alert"
-						className="text-sm font-medium text-red-700"
+						className="text-sm font-medium text-danger"
 					>
 						{choiceError}
 					</p>
@@ -459,7 +459,7 @@ export function PublicationForm({ deal, runner }: ActionProps) {
 				/>
 			</Field>
 			{trimmedUrl !== "" ? (
-				<p className="text-sm break-all text-zinc-700">
+				<p className="text-sm break-all text-fg-secondary">
 					<span className="font-medium">Link preview:</span> {trimmedUrl}
 				</p>
 			) : null}
@@ -486,7 +486,7 @@ export function PublicationForm({ deal, runner }: ActionProps) {
 				/>
 			</Field>
 			<div className="space-y-1">
-				<label className="flex min-h-11 items-start gap-3">
+				<label className="flex min-h-11 sm:min-h-9 items-start gap-3">
 					<input
 						type="checkbox"
 						checked={input.attested}
@@ -500,7 +500,7 @@ export function PublicationForm({ deal, runner }: ActionProps) {
 						aria-describedby={
 							allErrors.attested ? `${id}-attested-error` : undefined
 						}
-						className="mt-1 size-4 accent-indigo-600"
+						className="mt-1 size-4 accent-accent"
 					/>
 					<span>
 						I used the approved draft and followed the offer requirements
@@ -510,7 +510,7 @@ export function PublicationForm({ deal, runner }: ActionProps) {
 					<p
 						id={`${id}-attested-error`}
 						role="alert"
-						className="text-sm font-medium text-red-700"
+						className="text-sm font-medium text-danger"
 					>
 						{allErrors.attested}
 					</p>

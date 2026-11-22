@@ -31,7 +31,7 @@ function EmptyState({ me, filter }: { me: Me; filter: DealListFilter }) {
 		return (
 			<div className={CARD}>
 				<p className="font-medium">{EMPTY_TEXT[filter]}</p>
-				<p className="mt-1 text-zinc-600">
+				<p className="mt-1 text-fg-muted">
 					Brands can find you and send offers once your profile is listed.
 				</p>
 				<p className="mt-3">
@@ -65,7 +65,7 @@ function DealRow({ deal, me }: { deal: Deal; me: Me }) {
 
 	return (
 		<li
-			className={`${CARD} relative hover:border-zinc-300 hover:bg-zinc-50`}
+			className={`${CARD} relative hover:border-border-strong hover:bg-surface-2`}
 		>
 			<div className="flex items-start gap-3">
 				<Avatar name={other.displayName} seed={other.id} />
@@ -74,7 +74,7 @@ function DealRow({ deal, me }: { deal: Deal; me: Me }) {
 						<h2 className="font-semibold break-words">
 							<Link
 								href={`/deals/${deal.id}`}
-								className="after:absolute after:inset-0 after:rounded-lg focus-visible:outline-none focus-visible:after:outline-2 focus-visible:after:outline-offset-2 focus-visible:after:outline-indigo-600"
+								className="after:absolute after:inset-0 after:rounded-lg focus-visible:outline-none focus-visible:after:outline-2 focus-visible:after:outline-offset-2 focus-visible:after:outline-focus"
 							>
 								{other.displayName}
 							</Link>
@@ -84,7 +84,7 @@ function DealRow({ deal, me }: { deal: Deal; me: Me }) {
 							{formatCents(terms.amountCents)}
 						</p>
 					</div>
-					<p className="break-words text-zinc-700">{terms.product.name}</p>
+					<p className="break-words text-fg-secondary">{terms.product.name}</p>
 					<div className="flex flex-wrap items-center gap-2">
 						<StatusChip
 							status={deal.status}
@@ -92,7 +92,7 @@ function DealRow({ deal, me }: { deal: Deal; me: Me }) {
 						/>
 						{next !== null ? (
 							<span
-								className={`text-sm ${next === "Your turn" ? "font-medium text-indigo-800" : "text-zinc-600"}`}
+								className={`text-sm ${next === "Your turn" ? "font-medium text-accent-text" : "text-fg-muted"}`}
 							>
 								{next}
 							</span>
@@ -100,7 +100,7 @@ function DealRow({ deal, me }: { deal: Deal; me: Me }) {
 						{deal.isOverdue ? <Tag tone="warning">Overdue</Tag> : null}
 						{deal.sample ? <Tag tone="sample">Sample</Tag> : null}
 					</div>
-					<p className="flex flex-wrap gap-x-3 gap-y-1 text-sm text-zinc-500">
+					<p className="flex flex-wrap gap-x-3 gap-y-1 text-sm text-fg-subtle">
 						<span>
 							Updated{" "}
 							<time dateTime={deal.updatedAt}>
@@ -142,7 +142,7 @@ export function DealList({ heading }: DealListProps) {
 			<h1 className="text-2xl font-semibold tracking-tight">{heading}</h1>
 
 			<nav aria-label="Filter deals">
-				<ul className="flex gap-1 overflow-x-auto border-b border-zinc-200">
+				<ul className="flex gap-1 overflow-x-auto border-b border-border">
 					{DEAL_FILTERS.map(({ value, label }) => {
 						const isCurrent = value === filter;
 
@@ -153,10 +153,10 @@ export function DealList({ heading }: DealListProps) {
 									replace
 									scroll={false}
 									aria-current={isCurrent ? "page" : undefined}
-									className={`-mb-px inline-flex min-h-11 items-center border-b-2 px-3 text-sm font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 ${
+									className={`-mb-px inline-flex min-h-11 sm:min-h-9 items-center border-b-2 px-3 text-sm font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus ${
 										isCurrent
-											? "border-indigo-600 text-zinc-900"
-											: "border-transparent text-zinc-600 hover:border-zinc-300 hover:text-zinc-900"
+											? "border-accent text-fg"
+											: "border-transparent text-fg-muted hover:border-border-strong hover:text-fg"
 									}`}
 								>
 									{label}
@@ -184,7 +184,7 @@ export function DealList({ heading }: DealListProps) {
 			) : null}
 
 			{deals === null && status === "loading" ? (
-				<p className="text-zinc-600">Loading deals…</p>
+				<p className="text-fg-muted">Loading deals…</p>
 			) : null}
 
 			{deals !== null && deals.length === 0 && status !== "failed" ? (

@@ -71,7 +71,7 @@ function groupByOrigin(labels: Label[]): LabelGroup[] {
 
 function renderLabels(labels: Label[]): ReactNode {
 	if (labels.length === 0) {
-		return <span className="text-zinc-500">None listed</span>;
+		return <span className="text-fg-subtle">None listed</span>;
 	}
 
 	return (
@@ -105,7 +105,7 @@ function renderMetric(
 				) : null}
 				{numberFormatter.format(metric.value)}
 			</span>
-			<span className="text-zinc-700">
+			<span className="text-fg-secondary">
 				{metric.label} on {metric.subject}
 			</span>
 			<OriginLabel origin={METRIC_ORIGINS[metric.source]} />
@@ -133,7 +133,7 @@ export function CreatorCardView({
 	return (
 		<article
 			aria-labelledby={headingId}
-			className="min-w-0 rounded-lg border border-zinc-200 bg-white p-4 shadow-sm sm:p-5"
+			className="min-w-0 rounded-lg border border-border bg-surface p-4 shadow-panel sm:p-5"
 		>
 			<div className="flex items-start gap-3">
 				<Avatar name={creator.displayName} seed={creator.id} size={48} />
@@ -146,7 +146,7 @@ export function CreatorCardView({
 							{creator.displayName}
 						</Heading>
 						{creator.dataMode === "SAMPLE" ? (
-							<span className="rounded bg-amber-100 px-1.5 py-0.5 text-xs font-medium text-amber-900 ring-1 ring-amber-300 ring-inset">
+							<span className="rounded bg-warning-soft px-1.5 py-0.5 text-xs font-medium text-warning ring-1 ring-warning-line ring-inset">
 								Sample data
 							</span>
 						) : null}
@@ -159,21 +159,21 @@ export function CreatorCardView({
 			</div>
 
 			{creator.bio ? (
-				<p className="mt-3 text-sm break-words text-zinc-700">{creator.bio}</p>
+				<p className="mt-3 text-sm break-words text-fg-secondary">{creator.bio}</p>
 			) : null}
 
 			<dl className="mt-4 space-y-3 text-sm">
 				<div>
-					<dt className="text-zinc-500">Topics</dt>
+					<dt className="text-fg-subtle">Topics</dt>
 					<dd className="mt-0.5">{renderLabels(creator.topics)}</dd>
 				</div>
 				<div>
-					<dt className="text-zinc-500">Formats</dt>
+					<dt className="text-fg-subtle">Formats</dt>
 					<dd className="mt-0.5">{renderLabels(creator.formats)}</dd>
 				</div>
 				{creator.typical7dViews !== null ? (
 					<div>
-						<dt className="text-zinc-500">
+						<dt className="text-fg-subtle">
 							Typical 7-day views · Creator reported
 						</dt>
 						<dd className="mt-0.5 font-medium tabular-nums">
@@ -183,7 +183,7 @@ export function CreatorCardView({
 				) : null}
 				{creator.publicMetrics.length > 0 ? (
 					<div>
-						<dt className="text-zinc-500">Public metrics</dt>
+						<dt className="text-fg-subtle">Public metrics</dt>
 						<dd className="mt-0.5">
 							<ul className="space-y-1">
 								{creator.publicMetrics.map((metric, index) =>
@@ -200,7 +200,7 @@ export function CreatorCardView({
 					</div>
 				) : null}
 				<div>
-					<dt className="text-zinc-500">Expected clicks</dt>
+					<dt className="text-fg-subtle">Expected clicks</dt>
 					<dd className="mt-0.5 tabular-nums">
 						{expectedClicks === null
 							? "Unavailable"
@@ -214,7 +214,7 @@ export function CreatorCardView({
 			</p>
 
 			{actions ? (
-				<div className="mt-4 flex flex-wrap gap-2 border-t border-zinc-100 pt-4">
+				<div className="mt-4 flex flex-wrap gap-2 border-t border-divider pt-4">
 					{actions}
 				</div>
 			) : null}

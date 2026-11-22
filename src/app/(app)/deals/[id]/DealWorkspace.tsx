@@ -57,7 +57,7 @@ export function DealWorkspace() {
 					<h1 className="text-2xl font-semibold tracking-tight">
 						{isMissing ? "Deal not found" : "We couldn’t load this deal"}
 					</h1>
-					<p className="text-zinc-700">
+					<p className="text-fg-secondary">
 						{isMissing
 							? "This deal doesn’t exist or isn’t yours to view."
 							: load.error.message}
@@ -77,7 +77,7 @@ export function DealWorkspace() {
 		}
 
 		return (
-			<p className="text-zinc-600" aria-live="polite">
+			<p className="text-fg-muted" aria-live="polite">
 				Loading deal…
 			</p>
 		);
@@ -93,7 +93,7 @@ export function DealWorkspace() {
 			</p>
 			<DealHeader deal={deal} viewerRole={me.role} />
 			{load.status === "failed" ? (
-				<p role="alert" className="text-sm text-red-700">
+				<p role="alert" className="text-sm text-danger">
 					Couldn’t refresh this deal. {load.error.message}
 				</p>
 			) : null}

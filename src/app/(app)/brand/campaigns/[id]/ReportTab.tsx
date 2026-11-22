@@ -44,10 +44,10 @@ function MetricLine({
 }) {
 	return (
 		<div>
-			<dt className="text-sm text-zinc-600">{label}</dt>
+			<dt className="text-sm text-fg-muted">{label}</dt>
 			<dd className="font-medium tabular-nums">{metricText(metric, noun)}</dd>
 			{metric.source !== null || metric.measuredAt !== null ? (
-				<dd className="text-sm text-zinc-500">
+				<dd className="text-sm text-fg-subtle">
 					{metric.source !== null ? SOURCE_LABELS[metric.source] : null}
 					{metric.source !== null && metric.measuredAt !== null ? " · " : null}
 					{metric.measuredAt !== null ? (
@@ -72,7 +72,7 @@ function DealRow({ item, deal }: { item: DealReport; deal: Deal | undefined }) {
 	const { windowStart, windowEnd } = item;
 
 	return (
-		<li className="space-y-3 rounded-lg border border-zinc-200 bg-white p-4">
+		<li className="space-y-3 rounded-lg border border-border bg-surface p-4">
 			<div className="flex flex-wrap items-center gap-2">
 				<h3 className="font-semibold">
 					{deal?.creator.displayName ?? "Deal"}
@@ -81,12 +81,12 @@ function DealRow({ item, deal }: { item: DealReport; deal: Deal | undefined }) {
 					<StatusChip status={deal.status} label={dealHeadline(deal, "BRAND")} />
 				) : null}
 				{item.sample ? (
-					<span className="rounded bg-amber-100 px-1.5 py-0.5 text-xs font-medium text-amber-900 ring-1 ring-amber-300 ring-inset">
+					<span className="rounded bg-warning-soft px-1.5 py-0.5 text-xs font-medium text-warning ring-1 ring-warning-line ring-inset">
 						Sample data
 					</span>
 				) : null}
 			</div>
-			<p className="text-sm text-zinc-600">
+			<p className="text-sm text-fg-muted">
 				{windowStart !== null && windowEnd !== null ? (
 					<>
 						First 7 days:{" "}
@@ -102,7 +102,7 @@ function DealRow({ item, deal }: { item: DealReport; deal: Deal | undefined }) {
 				<MetricLine label="Clicks" metric={item.clicks} noun="clicks" />
 			</dl>
 			{hasComparison(item.views) || hasComparison(item.clicks) ? (
-				<p className="text-sm text-zinc-700">
+				<p className="text-sm text-fg-secondary">
 					Use this result to refine the next brief.
 				</p>
 			) : null}
@@ -158,27 +158,27 @@ export function ReportTab({ campaignId }: ReportTabProps) {
 
 			<section
 				aria-labelledby="report-budget"
-				className="space-y-4 rounded-lg border border-zinc-200 bg-white p-4 sm:p-5"
+				className="space-y-4 rounded-lg border border-border bg-surface p-4 sm:p-5"
 			>
 				<h2 id="report-budget" className="text-lg font-semibold">
 					Budget and deals
 				</h2>
 				<BudgetBar budget={data.budget} />
-				<dl className="grid grid-cols-3 gap-3 border-t border-zinc-100 pt-4">
+				<dl className="grid grid-cols-3 gap-3 border-t border-divider pt-4">
 					<div>
-						<dt className="text-sm text-zinc-600">Agreed</dt>
+						<dt className="text-sm text-fg-muted">Agreed</dt>
 						<dd className="text-lg font-semibold tabular-nums">
 							{data.agreedCount}
 						</dd>
 					</div>
 					<div>
-						<dt className="text-sm text-zinc-600">Published</dt>
+						<dt className="text-sm text-fg-muted">Published</dt>
 						<dd className="text-lg font-semibold tabular-nums">
 							{data.publishedCount}
 						</dd>
 					</div>
 					<div>
-						<dt className="text-sm text-zinc-600">Completed</dt>
+						<dt className="text-sm text-fg-muted">Completed</dt>
 						<dd className="text-lg font-semibold tabular-nums">
 							{data.completedCount}
 						</dd>
@@ -191,7 +191,7 @@ export function ReportTab({ campaignId }: ReportTabProps) {
 					Results by deal
 				</h2>
 				{data.deals.items.length === 0 ? (
-					<p className="text-zinc-600">
+					<p className="text-fg-muted">
 						No agreed deals yet. Results appear here once a video is published.
 					</p>
 				) : (

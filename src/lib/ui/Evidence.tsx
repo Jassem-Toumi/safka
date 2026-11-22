@@ -15,7 +15,7 @@ type EvidenceRowProps = {
 };
 
 const LINK_CLASSES =
-	"font-medium text-indigo-700 underline underline-offset-4 hover:text-indigo-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600";
+	"font-medium text-accent-text underline underline-offset-4 hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus";
 
 /**
  * URLs come from third-party sources, so only http(s) becomes a link; a
@@ -63,9 +63,9 @@ export function EvidenceRow({ evidence }: EvidenceRowProps) {
 				<OriginLabel origin={evidence.kind} />
 			</div>
 			{evidence.excerpt ? (
-				<p className="line-clamp-3 text-sm text-zinc-700">{evidence.excerpt}</p>
+				<p className="line-clamp-3 text-sm text-fg-secondary">{evidence.excerpt}</p>
 			) : null}
-			<p className="flex flex-wrap gap-x-3 text-sm text-zinc-500">
+			<p className="flex flex-wrap gap-x-3 text-sm text-fg-subtle">
 				<span>
 					Found on{" "}
 					<time dateTime={evidence.retrievedAt}>

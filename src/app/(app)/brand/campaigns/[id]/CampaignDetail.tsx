@@ -41,7 +41,7 @@ function toTab(value: string | null): TabId {
 function BriefRow({ term, children }: { term: string; children: ReactNode }) {
 	return (
 		<div className="grid gap-1 py-3 sm:grid-cols-[12rem_1fr] sm:gap-4">
-			<dt className="text-sm text-zinc-600">{term}</dt>
+			<dt className="text-sm text-fg-muted">{term}</dt>
 			<dd className="min-w-0 break-words">{children}</dd>
 		</div>
 	);
@@ -49,7 +49,7 @@ function BriefRow({ term, children }: { term: string; children: ReactNode }) {
 
 function TextList({ items, empty }: { items: string[]; empty: string }) {
 	if (items.length === 0) {
-		return <span className="text-zinc-500">{empty}</span>;
+		return <span className="text-fg-subtle">{empty}</span>;
 	}
 
 	return (
@@ -63,7 +63,7 @@ function TextList({ items, empty }: { items: string[]; empty: string }) {
 
 function countText(count: number | null): ReactNode {
 	return count === null ? (
-		<span className="text-zinc-500">Not set</span>
+		<span className="text-fg-subtle">Not set</span>
 	) : (
 		count.toLocaleString("en-US")
 	);
@@ -74,11 +74,11 @@ function BriefTab({ campaign }: { campaign: Campaign }) {
 	const { brief } = campaign;
 
 	if (brief === null) {
-		return <p className="text-zinc-600">This campaign has no brief yet.</p>;
+		return <p className="text-fg-muted">This campaign has no brief yet.</p>;
 	}
 
 	return (
-		<dl className="divide-y divide-zinc-100 rounded-lg border border-zinc-200 bg-white px-4 sm:px-5">
+		<dl className="divide-y divide-divider rounded-lg border border-border bg-surface px-4 sm:px-5">
 			<BriefRow term="Goal">{brief.goal || "Not set"}</BriefRow>
 			<BriefRow term="Objective">
 				{brief.objective === null
@@ -101,7 +101,7 @@ function BriefTab({ campaign }: { campaign: Campaign }) {
 			</BriefRow>
 			<BriefRow term="Preferred max per video">
 				{campaign.preferredMaxPerPostCents === null ? (
-					<span className="text-zinc-500">Not set</span>
+					<span className="text-fg-subtle">Not set</span>
 				) : (
 					formatCents(campaign.preferredMaxPerPostCents)
 				)}
@@ -121,8 +121,8 @@ function BriefTab({ campaign }: { campaign: Campaign }) {
 
 function DealsTab() {
 	return (
-		<div className="space-y-3 rounded-lg border border-zinc-200 bg-white p-4 sm:p-5">
-			<p className="text-zinc-700">
+		<div className="space-y-3 rounded-lg border border-border bg-surface p-4 sm:p-5">
+			<p className="text-fg-secondary">
 				Offers and deals from this campaign are in your deal list.
 			</p>
 			<Link href="/brand/deals" className={SECONDARY_LINK_CLASSES}>
@@ -171,16 +171,16 @@ export function CampaignDetail() {
 					</h1>
 					<CampaignStatusChip status={data.status} />
 				</div>
-				<div className="rounded-lg border border-zinc-200 bg-white p-4 sm:p-5">
+				<div className="rounded-lg border border-border bg-surface p-4 sm:p-5">
 					{data.budget === null ? (
-						<p className="text-zinc-600">No budget set yet.</p>
+						<p className="text-fg-muted">No budget set yet.</p>
 					) : (
 						<BudgetBar budget={data.budget} />
 					)}
 				</div>
 			</div>
 
-			<nav aria-label="Campaign sections" className="border-b border-zinc-200">
+			<nav aria-label="Campaign sections" className="border-b border-border">
 				<ul className="-mb-px flex gap-1 overflow-x-auto">
 					{TABS.map(({ id, label }) => {
 						const isCurrent = id === tab;
@@ -191,10 +191,10 @@ export function CampaignDetail() {
 									href={`?tab=${id}`}
 									scroll={false}
 									aria-current={isCurrent ? "page" : undefined}
-									className={`inline-flex min-h-11 items-center border-b-2 px-3 text-sm font-medium whitespace-nowrap focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 ${
+									className={`inline-flex min-h-11 sm:min-h-9 items-center border-b-2 px-3 text-sm font-medium whitespace-nowrap focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus ${
 										isCurrent
-											? "border-indigo-600 text-zinc-900"
-											: "border-transparent text-zinc-600 hover:border-zinc-300 hover:text-zinc-900"
+											? "border-accent text-fg"
+											: "border-transparent text-fg-muted hover:border-border-strong hover:text-fg"
 									}`}
 								>
 									{label}

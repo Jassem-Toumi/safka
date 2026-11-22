@@ -1,5 +1,196 @@
 @import "tailwindcss";
 
+/* Class strategy: `.dark` on <html> (set before paint by the head script). */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+ * Semantic tokens. Components use these (`bg-surface`, `text-fg-muted`,
+ * `border-border`, `bg-accent`, `text-danger`, …), never raw palette colors,
+ * so every screen follows the theme. Text pairs meet WCAG AA (4.5:1) on bg,
+ * surface and surface-2 in both themes; the focus color meets 3:1.
+ */
+:root {
+	color-scheme: light;
+
+	--bg: #f7f7f8;
+	--surface: #ffffff;
+	--surface-2: #f4f4f5;
+	--surface-3: #ebebee;
+	--fill: #e4e4e7;
+
+	--divider: #efeff1;
+	--border: #e4e4e8;
+	--border-strong: #d0d1d6;
+
+	--fg: #0f1011;
+	--fg-secondary: #3c3f45;
+	--fg-muted: #52565e;
+	--fg-subtle: #63676f;
+
+	--accent: #5e6ad2;
+	--accent-hover: #4f5bc4;
+	--accent-fg: #ffffff;
+	--accent-text: #4b55c0;
+	--accent-soft: #eef0fc;
+	--accent-soft-hover: #e2e5fa;
+	--accent-line: #c7ccf3;
+	--accent-muted: #b4baee;
+	--focus: #5e6ad2;
+
+	--success: #16754a;
+	--success-soft: #ebf7f0;
+	--success-line: #b6e0c8;
+
+	--warning: #8a5300;
+	--warning-soft: #fdf5e6;
+	--warning-line: #ecd39d;
+
+	--danger: #c22d2d;
+	--danger-soft: #fdeeee;
+	--danger-line: #f2c3c1;
+	--danger-solid: #c9302c;
+	--danger-solid-hover: #b0261f;
+
+	--info: #1a659a;
+	--info-soft: #eaf3fa;
+	--info-line: #b6d6ee;
+
+	--overlay: rgb(15 16 17 / 0.4);
+	--highlight: rgb(255 255 255 / 0);
+	--overlay-shadow: 0 8px 24px rgb(15 16 17 / 0.12);
+}
+
+.dark {
+	color-scheme: dark;
+
+	--bg: #08090a;
+	--surface: #0f1011;
+	--surface-2: #16171a;
+	--surface-3: #1d1e22;
+	--fill: #26282d;
+
+	--divider: #1a1b1e;
+	--border: #222428;
+	--border-strong: #2f3237;
+
+	--fg: #f7f8f8;
+	--fg-secondary: #d0d3d9;
+	--fg-muted: #9a9ea6;
+	--fg-subtle: #80858e;
+
+	--accent: #5e6ad2;
+	--accent-hover: #5360cb;
+	--accent-fg: #ffffff;
+	--accent-text: #9ca5f4;
+	--accent-soft: #1a1c31;
+	--accent-soft-hover: #22253f;
+	--accent-line: #363c78;
+	--accent-muted: #3b4392;
+	--focus: #7c86e6;
+
+	--success: #4cc38a;
+	--success-soft: #0f2219;
+	--success-line: #1e4a34;
+
+	--warning: #e0ae47;
+	--warning-soft: #251d0d;
+	--warning-line: #564016;
+
+	--danger: #f2807b;
+	--danger-soft: #2a1415;
+	--danger-line: #5a2427;
+	--danger-solid: #c9302c;
+	--danger-solid-hover: #b0261f;
+
+	--info: #64b5ea;
+	--info-soft: #0e1f2c;
+	--info-line: #1d4460;
+
+	--overlay: rgb(0 0 0 / 0.6);
+	--highlight: rgb(255 255 255 / 0.04);
+	--overlay-shadow: 0 8px 24px rgb(0 0 0 / 0.4);
+}
+
+@theme inline {
+	--font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+
+	--color-bg: var(--bg);
+	--color-surface: var(--surface);
+	--color-surface-2: var(--surface-2);
+	--color-surface-3: var(--surface-3);
+	--color-fill: var(--fill);
+
+	--color-divider: var(--divider);
+	--color-border: var(--border);
+	--color-border-strong: var(--border-strong);
+
+	--color-fg: var(--fg);
+	--color-fg-secondary: var(--fg-secondary);
+	--color-fg-muted: var(--fg-muted);
+	--color-fg-subtle: var(--fg-subtle);
+
+	--color-accent: var(--accent);
+	--color-accent-hover: var(--accent-hover);
+	--color-accent-fg: var(--accent-fg);
+	--color-accent-text: var(--accent-text);
+	--color-accent-soft: var(--accent-soft);
+	--color-accent-soft-hover: var(--accent-soft-hover);
+	--color-accent-line: var(--accent-line);
+	--color-accent-muted: var(--accent-muted);
+	--color-focus: var(--focus);
+
+	--color-success: var(--success);
+	--color-success-soft: var(--success-soft);
+	--color-success-line: var(--success-line);
+
+	--color-warning: var(--warning);
+	--color-warning-soft: var(--warning-soft);
+	--color-warning-line: var(--warning-line);
+
+	--color-danger: var(--danger);
+	--color-danger-soft: var(--danger-soft);
+	--color-danger-line: var(--danger-line);
+	--color-danger-solid: var(--danger-solid);
+	--color-danger-solid-hover: var(--danger-solid-hover);
+
+	--color-info: var(--info);
+	--color-info-soft: var(--info-soft);
+	--color-info-line: var(--info-line);
+
+	--color-overlay: var(--overlay);
+
+	/* Faint top highlight instead of drop shadows; dialogs get a soft lift. */
+	--shadow-panel: inset 0 1px 0 0 var(--highlight);
+	--shadow-overlay: inset 0 1px 0 0 var(--highlight), var(--overlay-shadow);
+}
+
 @theme {
-	--font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+	/* Compact UI type: 13px small text, 14px body (set on <body>). */
+	--text-sm: 0.8125rem;
+	--text-sm--line-height: 1.25rem;
+	--text-2xl: 1.375rem;
+	--text-2xl--line-height: 1.875rem;
+}
+
+@layer base {
+	body {
+		font-size: 0.875rem;
+		line-height: 1.5rem;
+		font-feature-settings: "cv11", "ss01";
+	}
+
+	h1,
+	h2,
+	h3 {
+		letter-spacing: -0.012em;
+	}
+
+	h1 {
+		letter-spacing: -0.02em;
+	}
+
+	::selection {
+		background-color: var(--accent-soft-hover);
+		color: var(--fg);
+	}
 }

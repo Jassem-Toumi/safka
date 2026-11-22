@@ -40,7 +40,7 @@ export function CampaignList() {
 			) : null}
 
 			{campaigns.status === "ready" && items.length === 0 ? (
-				<p className="rounded-lg border border-dashed border-zinc-300 bg-white p-6 text-center text-zinc-700">
+				<p className="rounded-lg border border-dashed border-border-strong bg-surface p-6 text-center text-fg-secondary">
 					No campaigns yet. Start one to find matching creators.
 				</p>
 			) : null}
@@ -50,7 +50,7 @@ export function CampaignList() {
 					{items.map((campaign) => (
 						<li
 							key={campaign.id}
-							className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-zinc-200 bg-white p-4 shadow-sm"
+							className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border bg-surface p-4 shadow-panel"
 						>
 							<div className="min-w-0 space-y-1">
 								<div className="flex flex-wrap items-center gap-2">
@@ -62,7 +62,7 @@ export function CampaignList() {
 									</Link>
 									<CampaignStatusChip status={campaign.status} />
 								</div>
-								<p className="text-sm text-zinc-600">
+								<p className="text-sm text-fg-muted">
 									{campaign.budget === null
 										? "No budget set"
 										: `${formatCents(campaign.budget.remainingCents)} of ${formatCents(campaign.budget.budgetCents)} remaining`}

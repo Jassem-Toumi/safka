@@ -32,7 +32,7 @@ export function Avatar({ name, seed, size = 40 }: AvatarProps) {
 		return (
 			<span
 				aria-hidden="true"
-				className="inline-flex shrink-0 items-center justify-center rounded-full bg-zinc-200 font-medium text-zinc-700 select-none"
+				className="inline-flex shrink-0 items-center justify-center rounded-full bg-fill font-medium text-fg-secondary select-none"
 				style={{ ...dimensions, fontSize: Math.round(size * 0.4) }}
 			>
 				{initialsOf(name)}
@@ -46,7 +46,7 @@ export function Avatar({ name, seed, size = 40 }: AvatarProps) {
 			alt=""
 			{...dimensions}
 			onError={() => setFailedSeed(seed)}
-			className="shrink-0 rounded-full bg-zinc-100"
+			className="shrink-0 rounded-full bg-surface-3"
 		/>
 	);
 }

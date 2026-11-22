@@ -72,7 +72,7 @@ function NoticeBox({ deal, viewerRole, runner }: ActionPanelProps) {
 			ref={ref}
 			tabIndex={-1}
 			role="alert"
-			className="rounded-md border border-amber-300 bg-amber-50 p-3 text-sm text-amber-950 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-600"
+			className="rounded-md border border-warning-line bg-warning-soft p-3 text-sm text-warning focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-warning"
 		>
 			<p>{notice.message}</p>
 			{notice.kind === "expired" &&
@@ -147,7 +147,7 @@ export function ActionPanel({ deal, viewerRole, runner }: ActionPanelProps) {
 			</h2>
 			<div aria-live="polite">
 				{runner.announcement !== "" ? (
-					<p className="text-sm font-medium text-emerald-800">
+					<p className="text-sm font-medium text-success">
 						{runner.announcement}
 					</p>
 				) : null}
@@ -155,18 +155,18 @@ export function ActionPanel({ deal, viewerRole, runner }: ActionPanelProps) {
 			<NoticeBox deal={deal} viewerRole={viewerRole} runner={runner} />
 
 			{actions.length === 0 ? (
-				<p className="text-zinc-700">{waitingText(deal, viewerRole)}</p>
+				<p className="text-fg-secondary">{waitingText(deal, viewerRole)}</p>
 			) : null}
 
 			{isLastRound ? (
-				<p className="text-sm text-zinc-700">
+				<p className="text-sm text-fg-secondary">
 					This was the last draft round, so changes can’t be requested again.
 					Approve one option to continue.
 				</p>
 			) : null}
 
 			{actions.length > 0 ? (
-				<ul className="divide-y divide-zinc-100">
+				<ul className="divide-y divide-divider">
 					{actions.map((action) => (
 						<li key={action} className="py-4 first:pt-0 last:pb-0">
 							{renderAction(action)}

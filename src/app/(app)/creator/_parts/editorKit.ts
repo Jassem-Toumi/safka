@@ -6,10 +6,10 @@ import { FORMAT_OPTIONS } from "@/lib/profileForm";
 export type EditorMode = "onboarding" | "profile";
 
 export const INPUT_CLASSES =
-	"block min-h-11 w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-base focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-indigo-600 aria-invalid:border-red-600 sm:text-sm";
+	"block min-h-11 sm:min-h-9 w-full rounded-md border border-border-strong bg-surface dark:bg-surface-2 px-3 py-2 text-base focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-focus aria-invalid:border-danger sm:text-sm";
 
 export const SECTION_CLASSES =
-	"space-y-4 rounded-lg border border-zinc-200 bg-white p-4 shadow-sm sm:p-6";
+	"space-y-4 rounded-lg border border-border bg-surface p-4 shadow-panel sm:p-6";
 
 /** One editor per page, so fixed ids are safe and let errors move focus. */
 export const CONTROL_IDS: Record<FormErrorField, string> = {

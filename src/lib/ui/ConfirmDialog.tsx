@@ -79,12 +79,12 @@ export function ConfirmDialog({
 			aria-describedby={bodyId}
 			onCancel={handleCancel}
 			onClose={handleClose}
-			className="m-auto w-[calc(100%-2rem)] max-w-md rounded-lg border border-zinc-200 bg-white p-6 text-zinc-900 shadow-lg backdrop:bg-zinc-950/50"
+			className="m-auto w-[calc(100%-2rem)] max-w-md rounded-lg border border-border bg-surface p-6 text-fg shadow-overlay backdrop:bg-overlay"
 		>
 			<h2 id={titleId} className="text-lg font-semibold">
 				{title}
 			</h2>
-			<div id={bodyId} className="mt-2 space-y-2 text-sm text-zinc-700">
+			<div id={bodyId} className="mt-2 space-y-2 text-sm text-fg-secondary">
 				{children}
 			</div>
 			<div className="mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">

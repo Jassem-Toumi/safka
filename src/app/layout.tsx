@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
-import { Geist } from "next/font/google";
+import { Inter } from "next/font/google";
+
+import { THEME_INIT_SCRIPT } from "@/lib/theme";
 
 import "./globals.css";
 
-const geistSans = Geist({ subsets: ["latin"], variable: "--font-geist-sans" });
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 export const metadata: Metadata = {
 	title: "Safka",
@@ -14,8 +16,13 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
 	return (
-		<html lang="en" className={geistSans.variable}>
-			<body className="min-h-dvh bg-zinc-50 font-sans text-zinc-900 antialiased">
+		// The head script sets `dark` before paint, so the class differs from
+		// the server render on purpose.
+		<html lang="en" className={inter.variable} suppressHydrationWarning>
+			<head>
+				<script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+			</head>
+			<body className="min-h-dvh bg-bg font-sans text-fg antialiased">
 				{children}
 			</body>
 		</html>

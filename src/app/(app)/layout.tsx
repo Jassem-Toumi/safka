@@ -8,7 +8,7 @@ import { AppShell } from "@/lib/ui/AppShell";
 export default function AppLayout({ children }: { children: ReactNode }) {
 	return (
 		<AppShell>
-			<Suspense fallback={<p className="text-zinc-600">Loading…</p>}>
+			<Suspense fallback={<p className="text-fg-muted">Loading…</p>}>
 				{children}
 			</Suspense>
 		</AppShell>

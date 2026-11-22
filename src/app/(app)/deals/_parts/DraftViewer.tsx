@@ -71,14 +71,14 @@ function AssetPlayer({
 	return (
 		<li
 			className={`min-w-0 space-y-2 rounded-lg border p-3 ${
-				isApproved ? "border-emerald-400 ring-1 ring-emerald-400" : "border-zinc-200"
+				isApproved ? "border-success ring-1 ring-success" : "border-border"
 			}`}
 		>
 			<div className="flex flex-wrap items-center gap-2">
 				<h4 className="font-semibold">{optionLabel}</h4>
 				{isApproved ? <Tag tone="success">Approved</Tag> : null}
 			</div>
-			<p className="text-sm break-words text-zinc-600">
+			<p className="text-sm break-words text-fg-muted">
 				{fileLabel} · {formatBytes(sizeBytes)}
 				{durationSec !== null ? ` · ${formatDuration(durationSec)}` : ""}
 			</p>
@@ -119,7 +119,7 @@ function AssetPlayer({
 
 			<div aria-live="polite">
 				{player.status === "failed" ? (
-					<p className="text-sm font-medium text-red-700">{player.message}</p>
+					<p className="text-sm font-medium text-danger">{player.message}</p>
 				) : null}
 			</div>
 		</li>
@@ -144,18 +144,18 @@ function BatchView({
 				</h3>
 				{batch.late ? <Tag tone="warning">Submitted late</Tag> : null}
 			</div>
-			<p className="text-sm text-zinc-600">
+			<p className="text-sm text-fg-muted">
 				Submitted{" "}
 				<time dateTime={batch.submittedAt}>
 					{formatDateTime(batch.submittedAt)}
 				</time>
 			</p>
 			{batch.changeRequest !== null ? (
-				<div className="rounded-md border border-amber-300 bg-amber-50 p-3 text-sm">
-					<p className="font-medium text-amber-900">
+				<div className="rounded-md border border-warning-line bg-warning-soft p-3 text-sm">
+					<p className="font-medium text-warning">
 						Changes requested by {deal.brand.displayName}
 					</p>
-					<p className="mt-1 whitespace-pre-line text-zinc-800">
+					<p className="mt-1 whitespace-pre-line text-fg">
 						{batch.changeRequest}
 					</p>
 				</div>
@@ -197,11 +197,11 @@ export function DraftViewer({ deal }: DraftViewerProps) {
 			</h2>
 			<BatchView deal={deal} batch={latest} isLatest />
 			{earlier.length > 0 ? (
-				<details className="group rounded-md border border-zinc-200">
-					<summary className="flex min-h-11 cursor-pointer items-center px-3 font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+				<details className="group rounded-md border border-border">
+					<summary className="flex min-h-11 sm:min-h-9 cursor-pointer items-center px-3 font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">
 						Earlier rounds ({earlier.length})
 					</summary>
-					<div className="space-y-6 border-t border-zinc-200 p-3">
+					<div className="space-y-6 border-t border-border p-3">
 						{earlier.map((batch) => (
 							<BatchView
 								key={batch.id}
