@@ -1,6 +1,6 @@
-Put the two seed draft videos here (short, browser-playable MP4s you have permission to use):
+Seed draft videos for the held-dispute demo deal, generated locally (no third-party footage):
 
 - `seed-draft-option-1.mp4`
 - `seed-draft-option-2.mp4`
 
-Keep each under 20 MiB. `npm run demo:seed` copies them into `.local/uploads/`.
+Regenerate them with `npm run demo:videos` (macOS Swift + AVFoundation). `npm run demo:seed` copies them into `.local/uploads/`.

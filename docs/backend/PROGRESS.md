@@ -6,8 +6,8 @@ Spec: `Creator_Sponsorship_Backend_Spec-final.md`. Status legend: ✅ done · �
 | Session | Scope (final spec §1 build order) | Status |
 |---|---|---|
 | 1 | Foundation: Node 24, Next.js, SQLite schema (all tables), shared contracts (all routes), demo accounts/session/me, origin guard, seed, tests, docs | ✅ |
-| 2 | Creator profile + visibility, directory, products, You.com live/fixture enrichment, campaigns + parse (RULES, optional AI), matcher + angles | ⬜ |
-| 3 | Deals: create/counter/accept/decline/withdraw/expire, budget cap + concurrency, idempotency, uploads + range streaming, drafts/approval/HELD, publication, confirmations/RELEASED, disputes + admin, inbox filters, reports | ⬜ |
+| 2 | Creator profile + visibility, directory, products, You.com live/fixture enrichment, campaigns + parse (RULES, optional AI), matcher + angles | ✅ (AI brief mode deferred) |
+| 3 | Deals: create/counter/accept/decline/withdraw/expire, budget cap + concurrency, idempotency, uploads + range streaming, drafts/approval/HELD, publication, confirmations/RELEASED, disputes + admin, inbox filters, reports | ✅ |
 | 4 (if time) | Full §9 acceptance run with three contexts, frontend integration fixes, optional You.com AI brief | ⬜ |
 
 ## Checklist by spec section
@@ -17,64 +17,66 @@ Spec: `Creator_Sponsorship_Backend_Spec-final.md`. Status legend: ✅ done · �
 - ✅ Host + write-origin validation (`src/server/http/origin.ts`)
 - ✅ `GET /demo/accounts`, `POST/DELETE /demo/session`, `GET /me`; HttpOnly SameSite=Lax cookie; hashed session IDs in SQLite
 - ✅ Seeds: 2 brands, 5 fictitious sample creators (listed), 1 blank live-demo creator (draft), admin, 3 products, sample campaign + completed sample deal (420/600), moderation campaign + HELD disputed deal
-- ⬜ README (setup + commands) — write in Session 2 once more routes exist (CLAUDE.md has commands now)
-- ⬜ Seed MP4s: waiting on the team (`seed-assets/seed-draft-option-{1,2}.mp4`)
+- ✅ README (setup, env table, commands, demo accounts, reset)
+- ✅ Seed MP4s generated (`npm run demo:videos`, D25) and copied to `.local/uploads/` by seed
 
-### §3 You.com + profile — ⬜ (Session 2)
-- ✅ Channel normalizer `src/server/creators/channel.ts` + tests
-- ✅ Card builder with label provenance `src/server/creators/card.ts`
-- ⬜ `GET/PUT /creator/profile`, `POST /creator/profile/visibility`, `GET /creators`, `GET /creators/{id}`
-- ⬜ `POST /creator/enrichment` live (MCP `you-search`) + fixture mode
+### §3 You.com + profile — ✅
+- ✅ Channel normalizer `src/server/creators/channel.ts`, card builder with label provenance `src/server/creators/card.ts`
+- ✅ `GET/PUT /creator/profile`, `POST /creator/profile/visibility` (`src/server/creators/profile.ts`)
+- ✅ `GET /creators`, `GET /creators/{id}` (`src/server/creators/directory.ts`)
+- ✅ `POST /creator/enrichment` live (MCP `you-search`, `src/server/youcom/client.ts`) + fixture mode (`fixture.ts`), identity
+  match + keyword map (`extract.ts`), stale-safe apply (`enrichment.ts`). Live path tested with a stubbed provider.
+- ✅ Live search verified with the sponsor key in `.env.local` (`YDC_MODE=live`). Four real demo channels are listed with PUBLIC evidence via
+  `npm run demo:enrich` (D24) and appear in brand matches with live citations (acceptance #1).
 
-### §4 Briefs, matches, offers — ⬜ (Session 2: products/campaigns/parse/matches; Session 3: offer terms)
-### §5 Deal state and payment — ⬜ (Session 3)
-### §6 Media and reporting — ⬜ (Session 3)
-### §7 Contract — ✅ frozen v1 in `src/shared/contracts` (routes implemented: identity only)
-### §9 Acceptance — 🟡 #1 partially (seed, sign-in, restart persistence by file DB). Rest pending.
+### §4 Briefs, matches, offers — ✅ (offer terms via `POST /deals`; AI brief mode deferred)
+- ✅ Products CRUD `src/server/products/products.ts` (landing URL hygiene)
+- ✅ `POST /campaigns/parse` RULES (`src/server/campaigns/parse.ts`). ⬜ optional AI mode via `YDC_BRIEF_MODEL` (Session 4 if time)
+- ✅ Campaign CRUD/confirm/close/budget floor (`campaigns.ts`), budget helper (`budget.ts`)
+- ✅ Matcher + angle templates (`matcher.ts`, `angles.ts`): Clack Lab ranks first for the quiet-keyboard brief, Big Tech is omitted
+### §5 Deal state and payment — ✅
+- ✅ `POST/GET /deals`, `GET /deals/{id}`, `POST /deals/{id}/actions` (all 14 actions), derived EXPIRED, one-open-negotiation,
+  budget re-check on accept in the same `BEGIN IMMEDIATE` tx, idempotency with replay before the version check (`src/server/deals/*`)
+- ✅ Inbox filters `needs_action` / `in_progress` / `closed`; admin `GET /admin/disputes[/{id}]`; resolutions RESUME/CANCEL/REFUND/RELEASE
+### §6 Media and reporting — ✅
+- ✅ Multipart MP4 upload (20 MiB → 413, `ftyp` check, ≤6 unattached, file deleted if the tx fails), playback URL, media stream with
+  single ranges (206/416, `private, no-store`), verified over real HTTP in `next dev`
+- ✅ `GET /deals/{id}/report`, `GET /campaigns/{id}/report` (sample 420/600 BELOW_TARGET 30%)
+### §7 Contract — ✅ v1.2 — every §7 route is implemented
+### §9 Acceptance — ✅ all five run end-to-end over real HTTP (2026-11-22)
+- `npm run demo:acceptance` against `npm run dev` on a freshly seeded DB: 47/47 checks, with brand, creator, admin and second-brand
+  sessions in separate cookie jars. Live You.com: 6 PUBLIC sources in about 1.8 s; the approved citation appears on the brand match.
+- Restart persistence (completed deal intact after restarting the server) and offline fixture mode (SAMPLE, example.com only) checked.
+- Built-in browser: the brand session plays the approved draft MP4 and seeks with 206 range requests.
+- Not covered: UI clicks. There are no frontend pages yet (teammate), so the walkthrough exercises the API the pages will call.
 
 ## Files map
 - `src/shared/contracts/*` — Zod schemas + types for every route. `src/shared/topics.ts` — slug normalizer.
 - `src/server/db/{schema.sql,db.ts}` — schema + connection/`tx`. `src/server/clock.ts` — injectable clock.
 - `src/server/http/{route,respond,errors,auth,origin}.ts` — handler wrapper, envelope, ApiError, sessions, loopback guard.
 - `src/server/seed/{ids,seed}.ts` + `scripts/{seed,reset}.ts`.
-- `src/app/api/v1/{demo/accounts,demo/session,me}/route.ts`.
-- `tests/*.test.ts` + `tests/helpers.ts` (31 tests).
+- `src/server/creators/{profile,directory}.ts`, `src/server/products/products.ts`, `src/server/youcom/{client,fixture,extract,enrichment}.ts`,
+  `src/server/campaigns/{budget,parse,campaigns,matcher,angles}.ts`. `scripts/youcom-smoke.ts` (`npm run youcom:smoke`).
+- `src/app/api/v1/{demo/accounts,demo/session,me,creator/profile,creator/profile/visibility,creator/enrichment,creators,creators/[id],
+  products,products/[id],campaigns,campaigns/parse,campaigns/[id],campaigns/[id]/matches}/route.ts`.
+- `src/server/deals/{view,create,actions,idempotency,events,terms,list,media,reports}.ts`; routes under `src/app/api/v1/{deals,admin}/**`
+  and `campaigns/[id]/report`.
+- `tests/*.test.ts` + `tests/helpers.ts` (80 tests).
 
 ---
 
-## Next session brief (Session 2)
-**Start:** `source ~/.nvm/nvm.sh && nvm use && npm install && npm run demo:seed && npm test` — expect 31 passing.
-Read `CLAUDE.md`, then final spec §3, §4, §7.
+## Next session brief (Session 4)
+**Start:** `source ~/.nvm/nvm.sh && nvm use && npm install && npm run demo:seed && npm test` (expect 80 passing).
+`.env.local` has `YDC_MODE=live` and the sponsor key. After any reset, run `npm run demo:enrich` to list the real demo channels.
 
-**Build, in this order (each with tests in `tests/`):**
-1. `src/server/creators/profile.ts` + routes `GET/PUT /api/v1/creator/profile`, `POST /api/v1/creator/profile/visibility`
-   (creator only). PUT checks `expectedVersion` (409 `STALE_PROFILE`), bumps `version`, re-normalizes channel into
-   `channel_key`/`canonical_channel_url` (invalid channel → 400 field error `channel`). LISTED requires displayName, bio,
-   valid channel, ≥1 topic, ≥1 format; returns `listingBlockers`. LISTED copies draft → `published_json` via `buildCard`,
-   sets `published_version` and `listed_channel_key` (unique index → 409 `VALIDATION_ERROR` field `channel` "already listed").
-   HIDDEN clears `listed_channel_key`, keeps `published_json`. `hasUnpublishedChanges = version !== published_version`.
-   Evidence returned = rows for the current `channel_key`.
-2. Directory `GET /api/v1/creators` (brand only; LISTED; `q` over name/bio, `topic` slug, `format`; sort display name, id)
-   and `GET /api/v1/creators/{id}` (404 unless LISTED). Return the published `CreatorCard`.
-3. Products CRUD `GET/POST /api/v1/products`, `PATCH /api/v1/products/{id}` (brand-owned; others' IDs → 404).
-   Reject landing URLs with credentials or loopback/private IP literals.
-4. You.com: `src/server/youcom/{client,fixture,extract}.ts`. MCP Streamable HTTP via `@modelcontextprotocol/sdk`
-   (`StreamableHTTPClientTransport`), endpoint `https://api.you.com/mcp?tools=you-search` + `Authorization: Bearer $YDC_API_KEY`
-   when key present else `https://api.you.com/mcp/free`. One `you-search` call, `count: 6`, query
-   `site:youtube.com "<@handle or UC id>" videos reviews demonstrations`, 12 s total timeout incl. connect, always close.
-   Identity match = exact handle/channel ID in URL or snippet. Keyword map → topic/format suggestions. **Do the network call
-   outside `tx`**, then in a short `tx` re-check profile version + channel key before saving evidence (discard if changed,
-   `enrichment_runs.applied=0`). `YDC_MODE=fixture` → deterministic SAMPLE results, no network. Live failure → `FAILED` +
-   `errorCode`, never fixture fallback. Verify the live keyless endpoint once with a smoke script (any public query) —
-   **do not** run live enrichment against a real creator who hasn't opted in.
-5. Campaigns: `POST /api/v1/campaigns/parse` (RULES dictionary: dollar amounts like "$600" → budgetCents, topic/format keywords,
-   title from product, goal from prompt; `mode: RULES`), `GET/POST /api/v1/campaigns`, `GET/PATCH /api/v1/campaigns/{id}`
-   (DRAFT save, `confirm: true` → ACTIVE needs full `Brief` + budget; version check 409 `STALE_CAMPAIGN`; cap below
-   committed+spent → 409 `BUDGET_EXCEEDED`; close only without open unexpired negotiations). Budget helper in
-   `src/server/campaigns/budget.ts` (committed = agreed deals with payment NONE/HELD incl. DISPUTED; spent = RELEASED) —
-   Session 3 reuses it.
-6. Matcher `GET /api/v1/campaigns/{id}/matches` per §4 ranking + fixture test: Clack Lab (low reach, relevant) must rank
-   above Big Tech Mike (unrelated, huge reach, and actually omitted for zero topics). Angle templates by format.
-7. Write `README.md` (setup, env table, commands, demo accounts, reset). Update this file + changelog. Commit.
+**Do, in this order:**
+1. Help with frontend integration: check that the teammate's pages call `http://127.0.0.1:3000` (D3), send `Idempotency-Key` on
+   `POST /deals` and actions, refresh on `STALE_DEAL`, and use `availableActions` / `nextActionRole` rather than re-deriving them.
+   Fix backend issues they hit; log contract changes.
+2. Once the teammate's pages exist, repeat §9 through the UI in a real browser with three profiles (the API run already passes, see §9) (brand, creator, admin) using the built-in browser pane: the
+   quiet-keyboard campaign ($600) → match → $250 offer → $300 counter → accept; a direct offer; two drafts → revision → approve
+   → publish link → both confirm; the admin refund on the seeded dispute; the sample report.
+3. Optional: You.com AI brief mode (`YDC_BRIEF_MODEL`, Zod-validated, falls back to RULES). Only if time allows.
 
-**Open items for the user:** seed MP4s; an opted-in YouTube handle if they find one; they paste `YDC_API_KEY` in `.env.local`.
+**Known gaps / notes:** admins can read any deal that has ever had a dispute but can only act while one is open (D28).
+Live outcome metrics are never collected (by design).

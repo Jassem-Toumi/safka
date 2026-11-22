@@ -67,6 +67,8 @@ export const CampaignInput = z.object({
 export type CampaignInput = z.input<typeof CampaignInput>;
 
 export const CampaignPatch = CampaignInput.partial().extend({
+  /** No default on PATCH: omitted means unchanged. */
+  sourcePrompt: z.string().max(3000).optional(),
   expectedVersion: z.number().int(),
   status: z.literal("CLOSED").optional(),
 });
