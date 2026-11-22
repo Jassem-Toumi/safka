@@ -43,13 +43,13 @@ export function RootRedirect() {
 	return (
 		<main className="mx-auto max-w-md px-4 py-16" aria-live="polite">
 			{errorMessage === null ? (
-				<p className="text-zinc-600">Loading…</p>
+				<p className="text-muted">Loading…</p>
 			) : (
 				<div role="alert" className="space-y-3">
 					<p>We couldn’t check whether you’re signed in. {errorMessage}</p>
 					<Link
 						href="/sign-in"
-						className="font-medium text-indigo-700 underline underline-offset-4"
+						className="font-medium text-ink underline underline-offset-4"
 					>
 						Go to sign in
 					</Link>

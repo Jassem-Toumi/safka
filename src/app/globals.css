@@ -2,4 +2,49 @@
 
 @theme {
 	--font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+
+	/* Quiet, finance-grade palette: warm canvas, near-black ink, one lime accent. */
+	--color-canvas: #f6f5f1;
+	--color-surface: #ffffff;
+	--color-ink: #141412;
+	--color-ink-soft: #3a3a36;
+	--color-muted: #6e6d66;
+	--color-faint: #a3a29a;
+	--color-line: #e6e4dd;
+	--color-line-strong: #d4d2c9;
+	--color-accent: #e4f46a;
+	--color-accent-ink: #2d3300;
+	--color-positive: #1f7a4d;
+	--color-positive-bg: #e8f4ec;
+	--color-warning: #8a5a00;
+	--color-warning-bg: #fbf1da;
+	--color-danger: #b42318;
+	--color-danger-bg: #fdecea;
+	--color-info: #1d4fa8;
+	--color-info-bg: #e9effb;
+}
+
+@layer base {
+	html {
+		background: var(--color-canvas);
+	}
+
+	::selection {
+		background: var(--color-accent);
+		color: var(--color-ink);
+	}
+
+	:focus-visible {
+		outline: 2px solid var(--color-ink);
+		outline-offset: 2px;
+	}
+
+	dialog::backdrop {
+		background: rgb(20 20 18 / 0.35);
+		backdrop-filter: blur(2px);
+	}
+}
+
+@utility tabular {
+	font-variant-numeric: tabular-nums;
 }

@@ -93,16 +93,16 @@ export function AccountPicker() {
 		return (
 			<div
 				role="alert"
-				className="mt-8 rounded-lg border border-amber-300 bg-amber-50 p-4"
+				className="mt-8 rounded-xl border border-warning/30 bg-warning-bg p-4"
 			>
 				<p className="font-medium">Open Safka at {APP_ORIGIN}</p>
-				<p className="mt-1 text-sm text-zinc-700">
+				<p className="mt-1 text-sm text-ink-soft">
 					The local server only accepts that address, so sign-in won’t work
 					from here.
 				</p>
 				<a
 					href={`${APP_ORIGIN}/sign-in`}
-					className="mt-3 inline-block font-medium text-indigo-700 underline underline-offset-4"
+					className="mt-3 inline-block font-medium text-ink underline underline-offset-4"
 				>
 					Go to {APP_ORIGIN}
 				</a>
@@ -112,7 +112,7 @@ export function AccountPicker() {
 
 	if (loadState.status === "loading") {
 		return (
-			<p className="mt-8 text-zinc-600" aria-live="polite">
+			<p className="mt-8 text-muted" aria-live="polite">
 				Loading demo accounts…
 			</p>
 		);
@@ -125,7 +125,7 @@ export function AccountPicker() {
 				<button
 					type="button"
 					onClick={() => setAttempt((count) => count + 1)}
-					className="rounded-md border border-zinc-300 bg-white px-3 py-2 font-medium hover:bg-zinc-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+					className="rounded-md border border-line-strong bg-surface px-3 py-2 font-medium hover:bg-canvas focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
 				>
 					Try again
 				</button>
@@ -155,10 +155,10 @@ export function AccountPicker() {
 
 				return (
 					<section key={role} aria-labelledby={`role-${role}`}>
-						<h2 id={`role-${role}`} className="text-lg font-semibold">
+						<h2 id={`role-${role}`} className="text-xs font-medium tracking-wide text-muted uppercase">
 							{heading}
 						</h2>
-						<p className="text-sm text-zinc-600">{hint}</p>
+						<p className="text-sm text-ink-soft">{hint}</p>
 						<ul className="mt-3 space-y-2">
 							{accounts.map((account) => {
 								const isThisPending = pendingAccountId === account.id;
@@ -170,7 +170,7 @@ export function AccountPicker() {
 											onClick={() => handleSelect(account)}
 											disabled={isPending}
 											aria-busy={isThisPending}
-											className="flex min-h-12 w-full items-center justify-between rounded-lg border border-zinc-200 bg-white px-4 py-3 text-left font-medium shadow-sm hover:border-zinc-300 hover:bg-zinc-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:cursor-not-allowed disabled:opacity-60"
+											className="flex min-h-12 w-full items-center justify-between rounded-xl border border-line bg-surface px-4 py-3 text-left font-medium hover:border-line-strong hover:bg-canvas focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink disabled:cursor-not-allowed disabled:opacity-60"
 										>
 											<span>
 												<span className="sr-only">Sign in as </span>
@@ -178,7 +178,7 @@ export function AccountPicker() {
 											</span>
 											<span
 												aria-hidden="true"
-												className="text-sm font-normal text-zinc-500"
+												className="text-sm font-normal text-muted"
 											>
 												{isThisPending ? "Signing in…" : "Sign in"}
 											</span>
