@@ -1,4 +1,6 @@
-// Placeholder. The frontend teammate owns all pages; backend lives under src/app/api.
-export default function Home() {
-  return <main style={{ fontFamily: "sans-serif", padding: 24 }}>Safka backend is running. API at /api/v1.</main>;
+import { RootRedirect } from "./RootRedirect";
+
+/** `/` sends people where they belong (frontend spec §2). */
+export default function HomePage() {
+	return <RootRedirect />;
 }
