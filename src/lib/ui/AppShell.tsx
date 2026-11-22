@@ -18,8 +18,9 @@ const NAV_ITEMS: Record<Role, readonly NavItem[]> = {
 	BRAND: [
 		{ href: "/brand/creators", label: "Creators" },
 		{ href: "/brand/campaigns", label: "Campaigns" },
-		{ href: "/brand/deals", label: "Deals" },
-		{ href: "/brand/products", label: "Products" }
+		// Products are created inline in the campaign builder (cut for the
+		// deadline, Zach 2026-11-22), so there is no Products page.
+		{ href: "/brand/deals", label: "Deals" }
 	],
 	CREATOR: [
 		{ href: "/creator/inbox", label: "Inbox" },

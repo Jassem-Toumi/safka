@@ -1,5 +1,5 @@
-// Placeholder so sign-in lands inside the shell; replaced by its track
-// (docs/frontend/PLAN.md). Profile editor (Track C).
+import { ProfileEditor } from "@/app/(app)/creator/_parts/ProfileEditor";
+
 export default function Page() {
-	return <h1 className="text-2xl font-semibold tracking-tight">Set up your profile</h1>;
+	return <ProfileEditor mode="onboarding" />;
 }
