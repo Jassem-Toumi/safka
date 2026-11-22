@@ -1,10 +1,18 @@
+import type { ZodError } from "zod";
 import type {
+	BriefDraft,
+	Budget,
+	Campaign,
+	CampaignReport,
 	CreatorProfile,
 	Deal,
 	DealAction,
 	DealListFilter,
+	DealReport,
 	ErrorCode,
 	Me,
+	MetricResult,
+	Product,
 	Role
 } from "@/shared/contracts";
 
@@ -12,31 +20,39 @@ import {
 	ADMIN,
 	BRAND,
 	CREATOR,
-	campaigns,
+	campaigns as seedCampaigns,
 	creators,
 	deals as seedDeals,
 	demoAccounts,
 	disputeSummary,
 	makeTerms,
 	matches,
-	products
+	products as seedProducts,
+	SAMPLE_REPORT_DEAL_ID
 } from "@/lib/api/fixtures/data";
 import {
+	Brief,
+	CampaignInput,
+	CampaignPatch,
 	CreateDealInput,
 	CreatorProfileInput,
 	DealActionInput,
 	DemoSessionInput,
 	ERROR_STATUS,
 	ParseInput,
+	ProductInput,
+	ProductPatch,
 	TERMINAL_DEAL_STATUSES,
 	VisibilityInput
 } from "@/shared/contracts";
+import { normalizeTopics } from "@/shared/topics";
 
 // Fixture mode: an in-memory stand-in for routes the backend has not built
 // yet, enough to build every screen and click through the deal flow. It is
-// not the backend: it skips budgets, uploads and most validation. Switch the
-// viewer with setFixtureRole("CREATOR") in the browser console, then reload;
-// in auto mode a live /me sets it for you.
+// not the backend: it validates bodies against the contracts and enforces
+// campaign budgets, but skips uploads, idempotency, ownership and duplicate
+// negotiations. Switch the viewer with setFixtureRole("CREATOR") in the
+// browser console, then reload; in auto mode a live /me sets it for you.
 
 const ROLE_STORAGE_KEY = "safka.fixtureRole";
 
@@ -73,6 +89,17 @@ if (typeof window !== "undefined") {
 const deals = new Map(
 	seedDeals.map((deal) => [deal.id, structuredClone(deal)])
 );
+const campaigns = new Map(
+	seedCampaigns.map((campaign) => [campaign.id, structuredClone(campaign)])
+);
+const products = new Map(
+	seedProducts.map((product) => [product.id, structuredClone(product)])
+);
+
+const REPORT_WINDOW_MS = 7 * 86_400_000;
+
+/** Seeded actuals for the one labeled sample report (final spec §6). */
+const SAMPLE_ACTUALS = { views: 21500, clicks: 420 };
 
 let profile: CreatorProfile = buildProfile();
 
@@ -134,6 +161,160 @@ function list(items: unknown[]): Response {
 
 function notFound(): Response {
 	return fail("NOT_FOUND", "Not found.");
+}
+
+/** Zod issues as `fields`, keyed by dotted path like the backend's. */
+function issueFields(error: ZodError, prefix = ""): Record<string, string> {
+	const fields: Record<string, string> = {};
+
+	for (const issue of error.issues) {
+		const key = [prefix, ...issue.path.map(String)].filter(Boolean).join(".");
+
+		fields[key || "_"] ??= issue.message;
+	}
+
+	return fields;
+}
+
+function invalid(error: ZodError): Response {
+	return fail(
+		"VALIDATION_ERROR",
+		"Some fields are invalid.",
+		issueFields(error)
+	);
+}
+
+/** True when the raw JSON body sent `key`, even if its value is null. */
+function hasField(body: unknown, key: string): boolean {
+	return typeof body === "object" && body !== null && key in body;
+}
+
+/** A PATCH value when one was sent, else the current value. */
+function patched<T>(value: T | undefined, current: T): T {
+	return value === undefined ? current : value;
+}
+
+function baseBudget(budgetCents: number | null): Budget | null {
+	if (budgetCents === null) {
+		return null;
+	}
+
+	return {
+		budgetCents,
+		committedCents: 0,
+		spentCents: 0,
+		remainingCents: budgetCents
+	};
+}
+
+/**
+ * Recomputes totals from the campaign's deals, as the backend does on every
+ * acceptance (final spec §5): agreements with pending or held payment are
+ * committed, released payments are spent, cancelled and refunded deals free
+ * their amount.
+ */
+function budgetFor(campaign: Campaign): Budget | null {
+	if (campaign.budget === null) {
+		return null;
+	}
+
+	let committedCents = 0;
+	let spentCents = 0;
+
+	for (const deal of deals.values()) {
+		if (deal.campaignId !== campaign.id || deal.agreement === null) {
+			continue;
+		}
+
+		const amount = deal.agreement.terms.amountCents;
+
+		if (deal.paymentStatus === "RELEASED") {
+			spentCents += amount;
+		} else if (
+			deal.paymentStatus !== "REFUNDED" &&
+			deal.status !== "CANCELLED"
+		) {
+			committedCents += amount;
+		}
+	}
+
+	const { budgetCents } = campaign.budget;
+
+	return {
+		budgetCents,
+		committedCents,
+		spentCents,
+		remainingCents: budgetCents - committedCents - spentCents
+	};
+}
+
+function campaignFor(deal: Deal): Campaign | undefined {
+	return deal.campaignId === null ? undefined : campaigns.get(deal.campaignId);
+}
+
+/** True when a fixture campaign can't cover `amountCents`. */
+function exceedsBudget(
+	campaignId: string | null,
+	amountCents: number
+): boolean {
+	const campaign = campaignId === null ? undefined : campaigns.get(campaignId);
+	const budget = campaign === undefined ? null : budgetFor(campaign);
+
+	return budget !== null && amountCents > budget.remainingCents;
+}
+
+function isOpenNegotiation(deal: Deal): boolean {
+	return (
+		deal.status === "NEGOTIATING" &&
+		Date.parse(deal.latestProposal.expiresAt) > Date.now()
+	);
+}
+
+function withTotals(campaign: Campaign): Campaign {
+	const campaignDeals = [...deals.values()].filter(
+		(deal) => deal.campaignId === campaign.id
+	);
+
+	return {
+		...campaign,
+		budget: budgetFor(campaign),
+		dealCount: campaignDeals.length,
+		hasOpenNegotiations: campaignDeals.some(isOpenNegotiation)
+	};
+}
+
+function normalizeBrief(brief: BriefDraft | null): BriefDraft | null {
+	return brief === null
+		? null
+		: { ...brief, topics: normalizeTopics(brief.topics) };
+}
+
+/** Field errors that block activation (final spec §4), or null if none. */
+function activationErrors(
+	brief: BriefDraft | null,
+	budgetCents: number | null
+): Record<string, string> | null {
+	const fields: Record<string, string> = {};
+
+	if (brief === null) {
+		fields.brief = "Add a brief before activating.";
+	} else {
+		const parsed = Brief.safeParse(brief);
+
+		if (!parsed.success) {
+			Object.assign(fields, issueFields(parsed.error, "brief"));
+		}
+
+		if (brief.topics.length === 0) {
+			fields["brief.topics"] = "Add at least one topic.";
+		}
+	}
+
+	if (budgetCents === null) {
+		fields.budgetCents = "Set a budget before activating.";
+	}
+
+	return Object.keys(fields).length === 0 ? null : fields;
 }
 
 function isTerminal(deal: Deal): boolean {
@@ -226,8 +407,13 @@ function nextActionRole(deal: Deal): Role | null {
 }
 
 function forViewer(deal: Deal, role: Role): Deal {
+	const campaign = campaignFor(deal);
+
 	return {
 		...deal,
+		// The campaign budget is only for the owning brand (final spec §7).
+		budget:
+			role === "BRAND" && campaign !== undefined ? budgetFor(campaign) : null,
 		availableActions: actionsFor(deal, role),
 		nextActionRole: nextActionRole(deal)
 	};
@@ -275,6 +461,16 @@ function applyAction(
 		case "ACCEPT":
 			if (input.proposalId !== deal.latestProposal.id) {
 				return fail("INVALID_STATE", "Not the latest proposal.");
+			}
+
+			// Checked before any change, so a blocked acceptance stays open.
+			if (
+				exceedsBudget(deal.campaignId, deal.latestProposal.terms.amountCents)
+			) {
+				return fail(
+					"BUDGET_EXCEEDED",
+					"This offer is more than the campaign's remaining budget."
+				);
 			}
 
 			deal.status = "AGREED";
@@ -464,7 +660,7 @@ function handleDealAction(dealId: string, body: unknown, role: Role) {
 	const parsed = DealActionInput.safeParse(body);
 
 	if (!parsed.success) {
-		return fail("VALIDATION_ERROR", parsed.error.message);
+		return invalid(parsed.error);
 	}
 
 	if (parsed.data.expectedVersion !== deal.version) {
@@ -489,16 +685,33 @@ function handleCreateDeal(body: unknown, role: Role): Response {
 	}
 
 	if (!parsed.success) {
-		return fail("VALIDATION_ERROR", parsed.error.message);
+		return invalid(parsed.error);
 	}
 
-	const { creatorId, campaignId, terms } = parsed.data;
+	const { creatorId, productId, campaignId, terms } = parsed.data;
+	// Live directory IDs are profile IDs the fixtures don't know; accept them.
 	const creator = creators.find((card) => card.id === creatorId);
+	const campaign = campaignId === null ? undefined : campaigns.get(campaignId);
 
-	if (creator === undefined) {
-		return fail("PROFILE_UNAVAILABLE", "This creator is not listed.");
+	if (campaign !== undefined && campaign.status !== "ACTIVE") {
+		return fail("INVALID_STATE", "Offers need an active campaign.");
 	}
 
+	if (campaign !== undefined && campaign.productId !== productId) {
+		return fail("VALIDATION_ERROR", "Use the campaign's product.", {
+			productId: "Must be the campaign's product."
+		});
+	}
+
+	if (exceedsBudget(campaignId, terms.amountCents)) {
+		return fail(
+			"BUDGET_EXCEEDED",
+			"This offer is more than the campaign's remaining budget."
+		);
+	}
+
+	const product = products.get(productId);
+	const baseTerms = makeTerms(terms.amountCents);
 	const nowIso = new Date().toISOString();
 	const id = `fixture-deal-${crypto.randomUUID()}`;
 	const deal: Deal = {
@@ -507,7 +720,7 @@ function handleCreateDeal(body: unknown, role: Role): Response {
 		status: "NEGOTIATING",
 		paymentStatus: "NONE",
 		brand: BRAND,
-		creator: { id: creator.id, displayName: creator.displayName },
+		creator: { id: creatorId, displayName: creator?.displayName ?? "Creator" },
 		campaignId,
 		budget: null,
 		latestProposal: {
@@ -516,7 +729,19 @@ function handleCreateDeal(body: unknown, role: Role): Response {
 			authorRole: "BRAND",
 			expiresAt: new Date(Date.now() + 7 * 86_400_000).toISOString(),
 			createdAt: nowIso,
-			terms: { ...makeTerms(terms.amountCents), ...terms }
+			terms: {
+				...baseTerms,
+				...terms,
+				product:
+					product === undefined
+						? baseTerms.product
+						: {
+								id: product.id,
+								name: product.name,
+								description: product.description,
+								landingUrl: product.landingUrl
+							}
+			}
 		},
 		agreement: null,
 		draftBatches: [],
@@ -550,10 +775,10 @@ function handleParse(body: unknown): Response {
 	const parsed = ParseInput.safeParse(body);
 
 	if (!parsed.success) {
-		return fail("VALIDATION_ERROR", parsed.error.message);
+		return invalid(parsed.error);
 	}
 
-	const { prompt } = parsed.data;
+	const { productId, prompt } = parsed.data;
 	const dollars = /\$\s?(\d[\d,]*)/.exec(prompt)?.[1];
 	const knownTopics = ["mechanical-keyboards", "desk-setups"].filter(
 		(topic) => prompt.toLowerCase().includes(topic.split("-")[0] ?? topic)
@@ -561,7 +786,7 @@ function handleParse(body: unknown): Response {
 
 	return ok({
 		brief: {
-			title: products[0]?.name ?? "",
+			title: products.get(productId)?.name ?? "",
 			goal: prompt,
 			objective: null,
 			topics: knownTopics,
@@ -578,14 +803,320 @@ function handleParse(body: unknown): Response {
 	});
 }
 
-function sampleCampaignReport(campaignId: string) {
+function handleCreateProduct(body: unknown, role: Role): Response {
+	if (role !== "BRAND") {
+		return fail("FORBIDDEN", "Brands manage products.");
+	}
+
+	const parsed = ProductInput.safeParse(body);
+
+	if (!parsed.success) {
+		return invalid(parsed.error);
+	}
+
 	const nowIso = new Date().toISOString();
-	const weekAgoIso = new Date(Date.now() - 8 * 86_400_000).toISOString();
-	const [campaign] = campaigns;
+	const product: Product = {
+		id: `fixture-product-${crypto.randomUUID()}`,
+		...parsed.data,
+		createdAt: nowIso,
+		updatedAt: nowIso
+	};
+
+	products.set(product.id, product);
+
+	return ok(product, 201);
+}
+
+function handleUpdateProduct(
+	productId: string,
+	body: unknown,
+	role: Role
+): Response {
+	if (role !== "BRAND") {
+		return fail("FORBIDDEN", "Brands manage products.");
+	}
+
+	const product = products.get(productId);
+
+	if (product === undefined) {
+		return notFound();
+	}
+
+	const parsed = ProductPatch.safeParse(body);
+
+	if (!parsed.success) {
+		return invalid(parsed.error);
+	}
+
+	const { name, description, landingUrl } = parsed.data;
+	const next: Product = {
+		...product,
+		name: patched(name, product.name),
+		description: patched(description, product.description),
+		landingUrl: patched(landingUrl, product.landingUrl),
+		updatedAt: new Date().toISOString()
+	};
+
+	products.set(next.id, next);
+
+	return ok(next);
+}
+
+function handleCreateCampaign(body: unknown, role: Role): Response {
+	if (role !== "BRAND") {
+		return fail("FORBIDDEN", "Brands create campaigns.");
+	}
+
+	const parsed = CampaignInput.safeParse(body);
+
+	if (!parsed.success) {
+		return invalid(parsed.error);
+	}
+
+	const { confirm, brief, budgetCents, ...fields } = parsed.data;
+	const normalized = normalizeBrief(brief);
+	const blockers =
+		confirm === true ? activationErrors(normalized, budgetCents) : null;
+
+	if (blockers !== null) {
+		return fail(
+			"VALIDATION_ERROR",
+			"Complete the brief and budget to activate.",
+			blockers
+		);
+	}
+
+	const nowIso = new Date().toISOString();
+	const campaign: Campaign = {
+		...fields,
+		id: `fixture-campaign-${crypto.randomUUID()}`,
+		version: 1,
+		status: confirm === true ? "ACTIVE" : "DRAFT",
+		brief: normalized,
+		budget: baseBudget(budgetCents),
+		dealCount: 0,
+		hasOpenNegotiations: false,
+		createdAt: nowIso,
+		updatedAt: nowIso
+	};
+
+	campaigns.set(campaign.id, campaign);
+
+	return ok(withTotals(campaign), 201);
+}
+
+/** Applies a validated edit, activation or close. Returns the new campaign or an error. */
+function editCampaign(
+	campaign: Campaign,
+	body: unknown,
+	role: Role
+): Campaign | Response {
+	if (role !== "BRAND") {
+		return fail("FORBIDDEN", "Brands edit campaigns.");
+	}
+
+	const parsed = CampaignPatch.safeParse(body);
+
+	if (!parsed.success) {
+		return invalid(parsed.error);
+	}
+
+	const { expectedVersion, status, confirm, ...patch } = parsed.data;
+
+	if (expectedVersion !== campaign.version) {
+		return fail("STALE_CAMPAIGN", "This campaign changed since you loaded it.");
+	}
+
+	if (campaign.status === "CLOSED") {
+		return fail("INVALID_STATE", "This campaign is closed.");
+	}
+
+	const totals = withTotals(campaign);
+
+	if (status === "CLOSED") {
+		if (totals.hasOpenNegotiations) {
+			return fail(
+				"INVALID_STATE",
+				"Finish or withdraw open negotiations before closing."
+			);
+		}
+
+		return { ...campaign, status: "CLOSED" };
+	}
+
+	const next: Campaign = {
+		...campaign,
+		productId: patched(patch.productId, campaign.productId),
+		// The contract defaults a missing sourcePrompt to "", so check the body.
+		sourcePrompt: hasField(body, "sourcePrompt")
+			? patched(patch.sourcePrompt, campaign.sourcePrompt)
+			: campaign.sourcePrompt,
+		brief:
+			patch.brief === undefined ? campaign.brief : normalizeBrief(patch.brief),
+		budget:
+			patch.budgetCents === undefined
+				? campaign.budget
+				: baseBudget(patch.budgetCents),
+		preferredMaxPerPostCents: patched(
+			patch.preferredMaxPerPostCents,
+			campaign.preferredMaxPerPostCents
+		),
+		defaultViewTarget: patched(
+			patch.defaultViewTarget,
+			campaign.defaultViewTarget
+		),
+		defaultClickTarget: patched(
+			patch.defaultClickTarget,
+			campaign.defaultClickTarget
+		)
+	};
+
+	// An active campaign must stay complete, whether or not this edit confirms.
+	const isActive = confirm === true || campaign.status === "ACTIVE";
+	const blockers = isActive
+		? activationErrors(next.brief, next.budget?.budgetCents ?? null)
+		: null;
+
+	if (blockers !== null) {
+		return fail(
+			"VALIDATION_ERROR",
+			"Complete the brief and budget to activate.",
+			blockers
+		);
+	}
+
+	const used =
+		(totals.budget?.committedCents ?? 0) + (totals.budget?.spentCents ?? 0);
+
+	if (next.budget !== null && next.budget.budgetCents < used) {
+		return fail("VALIDATION_ERROR", "The budget is below what's committed.", {
+			budgetCents: "Can't be less than committed plus spent."
+		});
+	}
+
+	return { ...next, status: isActive ? "ACTIVE" : campaign.status };
+}
+
+function handleUpdateCampaign(
+	campaignId: string,
+	body: unknown,
+	role: Role
+): Response {
+	const campaign = campaigns.get(campaignId);
+
+	if (campaign === undefined) {
+		return notFound();
+	}
+
+	const edited = editCampaign(campaign, body, role);
+
+	if (edited instanceof Response) {
+		return edited;
+	}
+
+	const next: Campaign = {
+		...edited,
+		version: campaign.version + 1,
+		updatedAt: new Date().toISOString()
+	};
+
+	campaigns.set(next.id, next);
+
+	return ok(withTotals(next));
+}
+
+/** A labeled sample metric: status and shortfall follow from the numbers. */
+function sampleMetric(
+	target: number | null,
+	actual: number,
+	measuredAt: string | null
+): MetricResult {
+	const base = { target, actual, measuredAt, source: "SAMPLE" as const };
+
+	if (target === null) {
+		return { ...base, status: "NO_TARGET", shortfallPct: null };
+	}
+
+	if (actual >= target) {
+		return { ...base, status: "MET", shortfallPct: null };
+	}
 
 	return {
-		campaignId,
-		budget: campaign?.budget ?? {
+		...base,
+		status: "BELOW_TARGET",
+		shortfallPct: Math.round((100 * (target - actual)) / target)
+	};
+}
+
+/** A metric with no actuals: nothing is measured outside the sample. */
+function unmeasuredMetric(
+	target: number | null,
+	isWindowClosed: boolean
+): MetricResult {
+	let status: MetricResult["status"] = "PENDING";
+
+	if (target === null) {
+		status = "NO_TARGET";
+	} else if (isWindowClosed) {
+		status = "INSUFFICIENT_DATA";
+	}
+
+	return {
+		target,
+		actual: null,
+		measuredAt: null,
+		source: null,
+		status,
+		shortfallPct: null
+	};
+}
+
+/**
+ * The deal's 7-day report (final spec §6). Only the seeded sample deal has
+ * actuals; every other deal reports NO_TARGET, PENDING while its window is
+ * open (or not yet started), and INSUFFICIENT_DATA afterwards.
+ */
+function dealReport(deal: Deal): DealReport {
+	const { viewTarget, clickTarget } = (deal.agreement ?? deal.latestProposal)
+		.terms;
+	const windowStart = deal.publication?.publishedAt ?? null;
+	const windowEnd =
+		windowStart === null
+			? null
+			: new Date(Date.parse(windowStart) + REPORT_WINDOW_MS).toISOString();
+	const report = {
+		dealId: deal.id,
+		status: deal.status,
+		windowStart,
+		windowEnd
+	};
+
+	if (deal.id === SAMPLE_REPORT_DEAL_ID) {
+		return {
+			...report,
+			views: sampleMetric(viewTarget, SAMPLE_ACTUALS.views, windowEnd),
+			clicks: sampleMetric(clickTarget, SAMPLE_ACTUALS.clicks, windowEnd),
+			sample: true
+		};
+	}
+
+	const isWindowClosed =
+		windowEnd === null ? isTerminal(deal) : Date.parse(windowEnd) <= Date.now();
+
+	return {
+		...report,
+		views: unmeasuredMetric(viewTarget, isWindowClosed),
+		clicks: unmeasuredMetric(clickTarget, isWindowClosed),
+		sample: false
+	};
+}
+
+function sampleCampaignReport(campaign: Campaign): CampaignReport {
+	const sampleDeal = deals.get(SAMPLE_REPORT_DEAL_ID);
+
+	return {
+		campaignId: campaign.id,
+		budget: budgetFor(campaign) ?? {
 			budgetCents: 0,
 			committedCents: 0,
 			spentCents: 0,
@@ -597,31 +1128,7 @@ function sampleCampaignReport(campaignId: string) {
 		completedCount: 1,
 		sample: true,
 		deals: {
-			items: [
-				{
-					dealId: "fixture-deal-completed",
-					status: "COMPLETED",
-					windowStart: weekAgoIso,
-					windowEnd: nowIso,
-					views: {
-						target: 20000,
-						actual: 21500,
-						measuredAt: nowIso,
-						source: "SAMPLE",
-						status: "MET",
-						shortfallPct: null
-					},
-					clicks: {
-						target: 600,
-						actual: 420,
-						measuredAt: nowIso,
-						source: "SAMPLE",
-						status: "BELOW_TARGET",
-						shortfallPct: 30
-					},
-					sample: true
-				}
-			],
+			items: sampleDeal === undefined ? [] : [dealReport(sampleDeal)],
 			nextCursor: null
 		}
 	};
@@ -712,7 +1219,7 @@ export async function handleFixtureRequest(
 			const parsed = CreatorProfileInput.safeParse(body);
 
 			if (!parsed.success) {
-				return fail("VALIDATION_ERROR", parsed.error.message);
+				return invalid(parsed.error);
 			}
 
 			const { expectedVersion, ...draft } = parsed.data;
@@ -736,7 +1243,7 @@ export async function handleFixtureRequest(
 			const parsed = VisibilityInput.safeParse(body);
 
 			if (!parsed.success) {
-				return fail("VALIDATION_ERROR", parsed.error.message);
+				return invalid(parsed.error);
 			}
 
 			if (parsed.data.expectedVersion !== profile.version) {
@@ -772,25 +1279,52 @@ export async function handleFixtureRequest(
 			});
 
 		case "GET /products":
-			return list(products);
+			return list([...products.values()]);
+
+		case "POST /products":
+			return handleCreateProduct(body, role);
+
+		case "PATCH /products/:id":
+			return handleUpdateProduct(firstId, body, role);
 
 		case "POST /campaigns/parse":
 			return handleParse(body);
 
 		case "GET /campaigns":
-			return list(campaigns);
+			return list([...campaigns.values()].map(withTotals));
+
+		case "POST /campaigns":
+			return handleCreateCampaign(body, role);
 
 		case "GET /campaigns/:id": {
-			const campaign = campaigns.find((c) => c.id === firstId);
+			const campaign = campaigns.get(firstId);
 
-			return campaign === undefined ? notFound() : ok(campaign);
+			return campaign === undefined ? notFound() : ok(withTotals(campaign));
 		}
 
-		case "GET /campaigns/:id/matches":
-			return list(matches);
+		case "PATCH /campaigns/:id":
+			return handleUpdateCampaign(firstId, body, role);
 
-		case "GET /campaigns/:id/report":
-			return ok(sampleCampaignReport(firstId));
+		case "GET /campaigns/:id/matches": {
+			const campaign = campaigns.get(firstId);
+
+			return campaign === undefined
+				? notFound()
+				: list(
+						matches.map((match) => ({
+							...match,
+							campaignVersion: campaign.version
+						}))
+					);
+		}
+
+		case "GET /campaigns/:id/report": {
+			const campaign = campaigns.get(firstId);
+
+			return campaign === undefined
+				? notFound()
+				: ok(sampleCampaignReport(campaign));
+		}
 
 		case "POST /deals":
 			return handleCreateDeal(body, role);
@@ -832,6 +1366,14 @@ export async function handleFixtureRequest(
 
 		case "POST /deals/:id/actions":
 			return handleDealAction(firstId, body, role);
+
+		case "GET /deals/:id/report": {
+			const deal = deals.get(firstId);
+
+			return deal === undefined || !canView(deal, role)
+				? notFound()
+				: ok(dealReport(deal));
+		}
 
 		case "POST /deals/:id/uploads":
 			return ok({

@@ -14,9 +14,9 @@ import type {
 import { SEED } from "@/server/seed/ids";
 
 // Seed data for fixture mode, following the demo story in the specs: a
-// quiet-keyboard brand, a sound-test creator, a $600 campaign. IDs reuse the
+// quiet-keyboard brand, a sound-test creator, a $1,200 campaign. IDs reuse the
 // backend's stable seed IDs where the record exists there. Every value must
-// satisfy src/shared/contracts (tests/frontend/fixtures.test.ts checks it).
+// satisfy src/shared/contracts (tests/frontend/api.test.ts checks it).
 
 const startMs = Date.now();
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -135,7 +135,7 @@ export const campaigns: Campaign[] = [
 		id: "fixture-campaign-quiet-office",
 		productId: product.id,
 		sourcePrompt:
-			"Promote our quiet mechanical keyboard to people building shared-office setups. Budget $600.",
+			"Promote our quiet mechanical keyboard to people building shared-office setups. Budget $1,200.",
 		version: 2,
 		status: "ACTIVE",
 		brief: {
@@ -147,16 +147,18 @@ export const campaigns: Campaign[] = [
 			talkingPoints: ["Dampened case", "Silent linear switches"],
 			restrictions: ["No competitor names in the title"]
 		},
+		// Three agreed seeded deals at $300 commit $900 of $1,200 (the fixture
+		// handler recomputes these from the deals on every read).
 		budget: {
-			budgetCents: 60000,
-			committedCents: 30000,
+			budgetCents: 120000,
+			committedCents: 90000,
 			spentCents: 0,
 			remainingCents: 30000
 		},
 		preferredMaxPerPostCents: 35000,
 		defaultViewTarget: 10000,
 		defaultClickTarget: 600,
-		dealCount: 3,
+		dealCount: 4,
 		hasOpenNegotiations: true,
 		createdAt: daysFromNow(-3),
 		updatedAt: daysFromNow(-1)
@@ -242,7 +244,7 @@ export function makeTerms(amountCents: number): Terms {
 	};
 }
 
-function baseDeal(id: string, amountCents: number): Deal {
+function baseDeal(id: string, terms: Terms): Deal {
 	return {
 		id,
 		version: 1,
@@ -258,7 +260,7 @@ function baseDeal(id: string, amountCents: number): Deal {
 			authorRole: "BRAND",
 			expiresAt: daysFromNow(7),
 			createdAt: daysFromNow(-1),
-			terms: makeTerms(amountCents)
+			terms
 		},
 		agreement: null,
 		draftBatches: [],
@@ -316,16 +318,19 @@ const publication: Publication = {
 	sample: true
 };
 
+/** The completed deal whose report shows the labeled sample metrics. */
+export const SAMPLE_REPORT_DEAL_ID = "fixture-deal-completed";
+
 /** One deal per significant UI state (frontend spec §7). */
 export const deals: Deal[] = [
-	baseDeal("fixture-deal-offer", 25000),
+	baseDeal("fixture-deal-offer", makeTerms(25000)),
 	{
-		...agreed(baseDeal("fixture-deal-drafts", 30000)),
+		...agreed(baseDeal("fixture-deal-drafts", makeTerms(30000))),
 		status: "DRAFT_REVIEW",
 		draftBatches: [draftBatch]
 	},
 	{
-		...agreed(baseDeal("fixture-deal-published", 30000)),
+		...agreed(baseDeal("fixture-deal-published", makeTerms(30000))),
 		status: "PUBLISHED",
 		paymentStatus: "HELD",
 		draftBatches: [draftBatch],
@@ -334,7 +339,7 @@ export const deals: Deal[] = [
 		confirmations: [{ role: "CREATOR", confirmedAt: daysFromNow(-0.1) }]
 	},
 	{
-		...agreed(baseDeal("fixture-deal-disputed", 30000)),
+		...agreed(baseDeal("fixture-deal-disputed", makeTerms(30000))),
 		status: "DISPUTED",
 		paymentStatus: "HELD",
 		draftBatches: [draftBatch],
@@ -354,13 +359,23 @@ export const deals: Deal[] = [
 		}
 	},
 	{
-		...agreed(baseDeal("fixture-deal-completed", 30000)),
+		...agreed(
+			baseDeal(SAMPLE_REPORT_DEAL_ID, {
+				...makeTerms(30000),
+				viewTarget: 20000
+			})
+		),
 		campaignId: null,
 		status: "COMPLETED",
 		paymentStatus: "RELEASED",
 		draftBatches: [draftBatch],
 		approvedAssetId: "fixture-asset-1",
-		publication,
+		// Published long enough ago that its 7-day window has closed.
+		publication: {
+			...publication,
+			publishedAt: daysFromNow(-9),
+			submittedAt: daysFromNow(-9)
+		},
 		confirmations: [
 			{ role: "CREATOR", confirmedAt: daysFromNow(-8) },
 			{ role: "BRAND", confirmedAt: daysFromNow(-8) }
