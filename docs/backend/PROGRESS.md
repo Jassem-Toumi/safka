@@ -43,7 +43,12 @@ Spec: `Creator_Sponsorship_Backend_Spec-final.md`. Status legend: ✅ done · �
   single ranges (206/416, `private, no-store`), verified over real HTTP in `next dev`
 - ✅ `GET /deals/{id}/report`, `GET /campaigns/{id}/report` (sample 420/600 BELOW_TARGET 30%)
 ### §7 Contract — ✅ v1.2 — every §7 route is implemented
-### §9 Acceptance — 🟡 #1–#5 covered by route-level tests (`tests/deals.test.ts`, `tests/enrichment.test.ts`); a browser run with three contexts is still to do (Session 4)
+### §9 Acceptance — ✅ all five run end-to-end over real HTTP (2026-11-22)
+- `npm run demo:acceptance` against `npm run dev` on a freshly seeded DB: 47/47 checks, with brand, creator, admin and second-brand
+  sessions in separate cookie jars. Live You.com: 6 PUBLIC sources in about 1.8 s; the approved citation appears on the brand match.
+- Restart persistence (completed deal intact after restarting the server) and offline fixture mode (SAMPLE, example.com only) checked.
+- Built-in browser: the brand session plays the approved draft MP4 and seeks with 206 range requests.
+- Not covered: UI clicks. There are no frontend pages yet (teammate), so the walkthrough exercises the API the pages will call.
 
 ## Files map
 - `src/shared/contracts/*` — Zod schemas + types for every route. `src/shared/topics.ts` — slug normalizer.
@@ -68,7 +73,7 @@ Spec: `Creator_Sponsorship_Backend_Spec-final.md`. Status legend: ✅ done · �
 1. Help with frontend integration: check that the teammate's pages call `http://127.0.0.1:3000` (D3), send `Idempotency-Key` on
    `POST /deals` and actions, refresh on `STALE_DEAL`, and use `availableActions` / `nextActionRole` rather than re-deriving them.
    Fix backend issues they hit; log contract changes.
-2. Run §9 acceptance in a real browser with three profiles (brand, creator, admin) using the built-in browser pane: the
+2. Once the teammate's pages exist, repeat §9 through the UI in a real browser with three profiles (the API run already passes, see §9) (brand, creator, admin) using the built-in browser pane: the
    quiet-keyboard campaign ($600) → match → $250 offer → $300 counter → accept; a direct offer; two drafts → revision → approve
    → publish link → both confirm; the admin refund on the seeded dispute; the sample report.
 3. Optional: You.com AI brief mode (`YDC_BRIEF_MODEL`, Zod-validated, falls back to RULES). Only if time allows.

@@ -44,6 +44,7 @@ the session cookie.
 | `npm run demo:reset -- --yes` | Deletes **only** the local SQLite files and `.local/uploads/`. Run `demo:seed` afterwards. |
 | `npm run demo:enrich` | Runs a live You.com search for each seeded demo channel and lists the ones that have public evidence. Run it after `demo:seed` (needs `YDC_API_KEY`). |
 | `npm run demo:videos` | Regenerates the two seed draft MP4s with macOS Swift/AVFoundation. |
+| `npm run demo:acceptance` | Runs the spec §9 walkthrough over HTTP against a running dev server, with separate brand, creator and admin sessions. Use a freshly seeded DB; the live step needs `YDC_MODE=live`. |
 | `npm run youcom:smoke` | Makes one live You.com call with a generic public query, to check connectivity. Never point it at a creator who hasn't opted in. |
 
 ## Demo accounts
