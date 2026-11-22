@@ -69,24 +69,21 @@ function groupByOrigin(labels: Label[]): LabelGroup[] {
 	})).filter((group) => group.values.length > 0);
 }
 
+/**
+ * One line of values. The card's single source tag (next to the name) covers
+ * provenance, so rows carry no per-origin pills (Zach, 2026-11-22).
+ */
 function renderLabels(labels: Label[]): ReactNode {
 	if (labels.length === 0) {
 		return <span className="text-zinc-500">None listed</span>;
 	}
 
+	const text = labels.map((label) => humanize(label.value)).join(", ");
+
 	return (
-		<ul className="space-y-1">
-			{groupByOrigin(labels).map(({ origin, values }) => (
-				<li key={origin} className="flex min-w-0 items-center gap-x-2">
-					<span className="truncate" title={values.join(", ")}>
-						{values.join(", ")}
-					</span>
-					<span className="shrink-0">
-						<OriginLabel origin={origin} />
-					</span>
-				</li>
-			))}
-		</ul>
+		<span className="block truncate" title={text}>
+			{text}
+		</span>
 	);
 }
 
@@ -148,8 +145,8 @@ export function CreatorCardView({
 							{creator.displayName}
 						</Heading>
 						{creator.dataMode === "SAMPLE" ? (
-							<span className="rounded bg-amber-100 px-1.5 py-0.5 text-xs font-medium text-amber-900 ring-1 ring-amber-300 ring-inset">
-								Sample data
+							<span className="shrink-0 text-xs text-zinc-500">
+								Sample profile
 							</span>
 						) : null}
 					</div>

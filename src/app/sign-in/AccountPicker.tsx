@@ -114,7 +114,7 @@ export function AccountPicker() {
 	if (loadState.status === "loading") {
 		return (
 			<p className="mt-8 text-zinc-600" aria-live="polite">
-				Loading demo accounts…
+				Loading accounts…
 			</p>
 		);
 	}
@@ -122,7 +122,7 @@ export function AccountPicker() {
 	if (loadState.status === "failed") {
 		return (
 			<div role="alert" className="mt-8 space-y-3">
-				<p>Couldn’t load demo accounts. {loadState.message}</p>
+				<p>Couldn’t load accounts. {loadState.message}</p>
 				<button
 					type="button"
 					onClick={() => setAttempt((count) => count + 1)}
@@ -160,7 +160,7 @@ export function AccountPicker() {
 							{heading}
 						</h2>
 						<p className="text-sm text-zinc-600">{hint}</p>
-						<ul className="mt-3 space-y-2">
+						<ul className="mt-3 grid gap-2 sm:grid-cols-2">
 							{accounts.map((account) => {
 								const isThisPending = pendingAccountId === account.id;
 
@@ -171,23 +171,23 @@ export function AccountPicker() {
 											onClick={() => handleSelect(account)}
 											disabled={isPending}
 											aria-busy={isThisPending}
-											className="group flex min-h-12 w-full items-center justify-between rounded-xl border border-zinc-200 bg-white px-4 py-3 text-left font-medium shadow-sm transition hover:border-indigo-300 hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:cursor-not-allowed disabled:opacity-60"
+											className="group flex h-16 w-full items-center justify-between gap-3 rounded-xl border border-zinc-200 bg-white px-4 py-3 text-left font-medium shadow-sm transition hover:border-indigo-300 hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:cursor-not-allowed disabled:opacity-60"
 										>
-											<span className="flex items-center gap-3">
+											<span className="flex min-w-0 items-center gap-3">
 												<Avatar
 													name={account.displayName}
 													seed={account.id}
 													size={40}
 													kind={account.role === "BRAND" ? "brand" : "person"}
 												/>
-												<span>
+												<span className="truncate" title={account.displayName}>
 													<span className="sr-only">Sign in as </span>
 													{account.displayName}
 												</span>
 											</span>
 											<span
 												aria-hidden="true"
-												className="text-sm font-normal text-zinc-500 group-hover:text-indigo-700"
+												className="shrink-0 text-sm font-normal whitespace-nowrap text-zinc-500 group-hover:text-indigo-700"
 											>
 												{isThisPending ? "Signing in…" : "Sign in"}
 											</span>

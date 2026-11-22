@@ -57,7 +57,7 @@ export function StatusChip({ status, label }: StatusChipProps) {
 export function PaymentChip({ status }: PaymentChipProps) {
 	return (
 		<span className="inline-flex flex-wrap items-center gap-2">
-			<span className="text-sm text-zinc-600">Simulated payment</span>
+			<span className="text-xs text-zinc-500">Simulated payment</span>
 			<span className={`${CHIP_BASE} ${TONE_CLASSES[PAYMENT_TONES[status]]}`}>
 				{paymentLabel(status)}
 			</span>
