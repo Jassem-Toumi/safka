@@ -59,17 +59,30 @@ don't commit (the lead commits path-scoped).
 
 ## Risks to remember
 
-- Fixture state is per-tab memory: until backend deals ship, the two-role demo
-  works in one tab via Switch account; never `window.location`.
-- Fixture deals have `budget: null`; hide the remaining-budget line when null.
-- Admin can't open `/deals/[id]` (`routing.ts`); the dispute detail renders the
-  deal inline.
+- **The backend is fully live** (every final-spec §7 route, 829fba4, merged
+  2026-11-22), so "auto" mode talks to it and fixtures only matter offline.
+  Build and verify against the live app with seeded data
+  (`npm run demo:seed`; accounts in `src/server/seed/ids.ts`, e.g. Hushkeys,
+  Clack Lab (sample), Demo Admin). `docs/backend/CONTRACT_CHANGELOG.md` has
+  the behavior notes: `Idempotency-Key` required on `POST /deals` and deal
+  actions; `Deal.creator.id` is the creator profile ID; upload returns 201;
+  `playback.url` goes straight into `<video src>`; older `proposalId` → 409
+  STALE_DEAL; lapsed proposal → PROPOSAL_EXPIRED; enrichment failure is
+  HTTP 200 with `status: "FAILED"` and `errorCode`; listing errors are 400
+  with `fields.<blocker>` and `details.listingBlockers`.
+- `tests/frontend/live.test.ts` checks the client against the running
+  backend (`SAFKA_LIVE_URL=http://127.0.0.1:3000`); run it after anything
+  touching `src/lib/api`.
+- Live deal state is shared across browser profiles, so the two-role demo can
+  use two profiles; still navigate client-side (no `window.location`).
+- `deal.budget` is null for creators and direct deals; hide the
+  remaining-budget line when null.
+- Admin can't open `/deals/[id]` (`routing.ts`); the dispute detail renders
+  the deal inline.
 - Client pages: use `useParams()`/`useSearchParams()` (Next 16 page props are
   Promises); one `<Suspense>` in the shell covers `useSearchParams`.
-- Contract traps: `IsoDateTime` needs `Z`; `Cents` ≤ 10,000,000; profile formats
-  ≤ 4; `confirm: true` needs a full brief with an objective; `attested: true`;
-  distinct `uploadIds`.
+- Contract traps: `IsoDateTime` needs `Z`; `Cents` ≤ 10,000,000; profile
+  formats ≤ 4; `confirm: true` needs a full brief with an objective;
+  `attested: true`; distinct `uploadIds`.
 - Omitted on purpose (no contract field): media kit, thumbnails from data,
   tracked links, view entry, notes, notifications, PARTIAL/STALE enrichment.
-- Seeded drafts have no media yet; the player needs a "can't play this file"
-  state.
