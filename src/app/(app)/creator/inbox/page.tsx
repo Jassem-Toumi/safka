@@ -1,5 +1,9 @@
-// Placeholder so sign-in lands inside the shell; replaced by its track
-// (docs/frontend/PLAN.md). Deal inbox (Track A).
-export default function Page() {
-	return <h1 className="text-2xl font-semibold tracking-tight">Inbox</h1>;
+import type { Metadata } from "next";
+
+import { DealList } from "@/app/(app)/deals/_parts/DealList";
+
+export const metadata: Metadata = { title: "Inbox · Safka" };
+
+export default function CreatorInboxPage() {
+	return <DealList heading="Inbox" />;
 }
