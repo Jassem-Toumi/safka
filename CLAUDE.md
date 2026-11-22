@@ -37,3 +37,43 @@
 ## Session handoff rule
 Before ending a session: tests + typecheck green, update `docs/backend/PROGRESS.md` (checklist + a fresh
 **Next session** brief), log new interpretations in `DECISIONS.md`, contract changes in `CONTRACT_CHANGELOG.md`, commit.
+
+## Frontend (Zach)
+
+Pages and components under `src/app/**` (except `src/app/api/**`), plus
+`src/lib/**` and `tests/frontend/**`. Don't edit backend files from a frontend
+task; ask the backend teammate for contract changes.
+
+- **Design brief:** `Creator_Sponsorship_Frontend_Spec.md` (routes §2, surfaces
+  §3–§6, status tables, interaction and accessibility §7), as amended by final
+  backend spec §8: demo account picker instead of signup, one synchronous
+  enrichment request, matches include the angle, multipart uploads, no tracked
+  links, view entry, notes or notifications. Where both are silent on something
+  a person would notice, ask Zach; don't invent a flow.
+- **Data:** call `@/lib/api` (`getDeal`, `actOnDeal`, …), never `fetch`. Every
+  response is validated against `@/shared/contracts`; drift throws `ApiError`
+  with code `CONTRACT_MISMATCH`. The client is browser-only (relative URLs), so
+  pages that load data are client components.
+- **Fixtures:** `NEXT_PUBLIC_API_MODE` is `auto` by default: live backend, and
+  `src/lib/api/fixtures/` answers only routes Next doesn't have yet (HTML 404),
+  so pages switch to live data as backend routes ship. `fixture` forces fixtures,
+  `live` forbids them. Fixtures follow the signed-in role; switch with
+  `setFixtureRole("CREATOR")` in the browser console. A new endpoint gets a
+  function in `endpoints.ts`, a fixture route, and a call in
+  `tests/frontend/api.test.ts`, which checks fixtures against the contracts.
+- **Deal actions** send `expectedVersion` and one `newIdempotencyKey()` per
+  intentional submission. Render the server's `availableActions`; never compute
+  permissions or move status optimistically.
+- **Labels:** sample data, creator-provided data and "Simulated payment" next to
+  the values they describe. Never call a creator "verified".
+- **Money and dates:** integer cents via `formatCents`/`dollarsToCents`, dates
+  with a time zone via `formatDateTime` (`src/lib/format.ts`).
+- **Gate:** a Stop hook runs `npm run typecheck && npm test` on Node 24 when
+  `src/` or `tests/` changed (`.claude/hooks/check-on-stop.sh`). Test logic
+  first; verify UI by running it at http://127.0.0.1:3000 (not `localhost`,
+  which the backend rejects).
+- **Style:** Zach's Coding Style (`zach-js-ts` skill) in frontend files: tabs,
+  double quotes, no trailing commas, named exports except Next's
+  `page`/`layout` files, `type` over `interface`, no `any`, `@/` imports.
+- **Network here is slow** (npm ~370 KB/s, 2026-11-22): ask before adding a
+  dependency, and don't create worktrees, which need their own install.
