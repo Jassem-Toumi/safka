@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 
 import { ApiError, listDemoAccounts, signIn } from "@/lib/api";
 import { postSignInPath } from "@/lib/routing";
+import { Avatar } from "@/lib/ui/Avatar";
 
 type LoadState =
 	| { status: "loading" }
@@ -172,9 +173,17 @@ export function AccountPicker() {
 											aria-busy={isThisPending}
 											className="group flex min-h-12 w-full items-center justify-between rounded-xl border border-zinc-200 bg-white px-4 py-3 text-left font-medium shadow-sm transition hover:border-indigo-300 hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:cursor-not-allowed disabled:opacity-60"
 										>
-											<span>
-												<span className="sr-only">Sign in as </span>
-												{account.displayName}
+											<span className="flex items-center gap-3">
+												<Avatar
+													name={account.displayName}
+													seed={account.id}
+													size={40}
+													kind={account.role === "BRAND" ? "brand" : "person"}
+												/>
+												<span>
+													<span className="sr-only">Sign in as </span>
+													{account.displayName}
+												</span>
 											</span>
 											<span
 												aria-hidden="true"

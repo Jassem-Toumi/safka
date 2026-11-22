@@ -77,12 +77,13 @@ function renderLabels(labels: Label[]): ReactNode {
 	return (
 		<ul className="space-y-1">
 			{groupByOrigin(labels).map(({ origin, values }) => (
-				<li
-					key={origin}
-					className="flex flex-wrap items-center gap-x-2 gap-y-1"
-				>
-					<span>{values.join(", ")}</span>
-					<OriginLabel origin={origin} />
+				<li key={origin} className="flex min-w-0 items-center gap-x-2">
+					<span className="truncate" title={values.join(", ")}>
+						{values.join(", ")}
+					</span>
+					<span className="shrink-0">
+						<OriginLabel origin={origin} />
+					</span>
 				</li>
 			))}
 		</ul>
@@ -133,15 +134,16 @@ export function CreatorCardView({
 	return (
 		<article
 			aria-labelledby={headingId}
-			className="card min-w-0 p-4 transition-shadow hover:shadow-md sm:p-5"
+			className="card flex h-full w-full min-w-0 flex-col p-4 transition-shadow hover:shadow-md sm:p-5"
 		>
 			<div className="flex items-start gap-3">
 				<Avatar name={creator.displayName} seed={creator.id} size={48} />
 				<div className="min-w-0 flex-1">
-					<div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+					<div className="flex min-w-0 items-center gap-x-2">
 						<Heading
 							id={headingId}
-							className="text-lg font-semibold tracking-tight break-words"
+							title={creator.displayName}
+							className="truncate text-lg font-semibold tracking-tight"
 						>
 							{creator.displayName}
 						</Heading>
@@ -159,7 +161,9 @@ export function CreatorCardView({
 			</div>
 
 			{creator.bio ? (
-				<p className="mt-3 text-sm break-words text-zinc-700">{creator.bio}</p>
+				<p className="mt-3 line-clamp-2 text-sm text-zinc-700" title={creator.bio}>
+				{creator.bio}
+			</p>
 			) : null}
 
 			<dl className="mt-4 space-y-3 text-sm">
@@ -209,7 +213,7 @@ export function CreatorCardView({
 				</div>
 			</dl>
 
-			<p className="mt-4 text-sm">
+			<p className="mt-auto pt-4 text-sm">
 				<ExternalLink href={creator.profileUrl}>YouTube channel</ExternalLink>
 			</p>
 

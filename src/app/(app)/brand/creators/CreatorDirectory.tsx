@@ -208,10 +208,10 @@ export function CreatorDirectory() {
 			{items.length > 0 ? (
 				<ul
 					aria-busy={creators.status === "loading"}
-					className="grid gap-4 md:grid-cols-2"
+					className="grid auto-rows-fr gap-4 md:grid-cols-2"
 				>
 					{items.map((creator) => (
-						<li key={creator.id} className="min-w-0">
+						<li key={creator.id} className="flex min-w-0">
 							<CreatorCardView creator={creator} />
 						</li>
 					))}

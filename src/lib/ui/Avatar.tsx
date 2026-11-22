@@ -7,7 +7,14 @@ type AvatarProps = {
 	seed: string;
 	/** Diameter in pixels. */
 	size?: number;
+	/** People get an illustrated face; brands get an abstract logo mark. */
+	kind?: "person" | "brand";
 };
+
+const STYLES = {
+	person: { path: "notionists-neutral", shape: "rounded-full" },
+	brand: { path: "shapes", shape: "rounded-lg" }
+} as const;
 
 function initialsOf(name: string): string {
 	const words = name
@@ -23,7 +30,8 @@ function initialsOf(name: string): string {
 }
 
 /** Decorative: always render the name beside it. */
-export function Avatar({ name, seed, size = 40 }: AvatarProps) {
+export function Avatar({ name, seed, size = 40, kind = "person" }: AvatarProps) {
+	const { path, shape } = STYLES[kind];
 	// Remembering which seed failed lets a new seed retry without an effect.
 	const [failedSeed, setFailedSeed] = useState<string | null>(null);
 	const dimensions = { width: size, height: size };
@@ -31,7 +39,7 @@ export function Avatar({ name, seed, size = 40 }: AvatarProps) {
 	const initials = (
 		<span
 			aria-hidden="true"
-			className="inline-flex size-full items-center justify-center rounded-full bg-indigo-100 font-semibold text-indigo-800 select-none"
+			className={`inline-flex size-full items-center justify-center ${shape} bg-indigo-100 font-semibold text-indigo-800 select-none`}
 			style={{ fontSize: Math.round(size * 0.4) }}
 		>
 			{initialsOf(name)}
@@ -51,16 +59,16 @@ export function Avatar({ name, seed, size = 40 }: AvatarProps) {
 	return (
 		<span
 			aria-hidden="true"
-			className="relative inline-flex shrink-0 rounded-full ring-1 ring-zinc-900/5"
+			className={`relative inline-flex shrink-0 ${shape} ring-1 ring-zinc-900/5`}
 			style={dimensions}
 		>
 			{initials}
 			<img
-				src={`https://api.dicebear.com/9.x/notionists-neutral/svg?seed=${encodeURIComponent(seed)}&backgroundColor=e0e7ff`}
+				src={`https://api.dicebear.com/9.x/${path}/svg?seed=${encodeURIComponent(seed)}&backgroundColor=e0e7ff`}
 				alt=""
 				{...dimensions}
 				onError={() => setFailedSeed(seed)}
-				className="absolute inset-0 rounded-full"
+				className={`absolute inset-0 ${shape}`}
 			/>
 		</span>
 	);
